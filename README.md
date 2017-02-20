@@ -11,10 +11,11 @@ Evolinc-II minimally requires the following input data
 # Availability
 ### Using Docker image
 
-Since there are several dependencies (can be seen in Dockerfile) to Evolinc-II to make it run on your linux or MAC OS, we highly recommend to use Docker image for [Evolinc-II](https://hub.docker.com/r/cyverse/evolinc-ii/) or use the [Dockerfile](https://hub.docker.com/r/cyverse/evolinc-ii/~/dockerfile/) to build an image and then use the built image for running Evolinc-II. Use the sample data to run Evolinc-II.
+Since there are several dependencies (can be seen in Dockerfile) to Evolinc-II to make it run on your linux or MAC OS, we highly recommend to use Docker image for [Evolinc-II](https://hub.docker.com/r/cyverse/evolinc-ii/) or use the [Dockerfile](https://hub.docker.com/r/cyverse/evolinc-ii/~/dockerfile/) to build an image and then use the built image for running Evolinc-II. Use the [sample data](https://github.com/Evolinc/Evolinc-II/releases/download/v1.0/sample_data.zip) to run Evolinc-II.
 
 ```
 docker pull cyverse/evolinc-ii:1.0
+unzip https://github.com/Evolinc/Evolinc-II/releases/download/v1.0/sample_data.zip
 docker run --rm -v $(pwd):/working-dir -w /working-dir docker.io/cyverse/evolinc-ii:1.0 -b sample_data/Blasting_list.txt -l sample_data/Evolinc-II Sample_query_lincRNA_data_set_for_webinar.fasta -q Atha -i sample_data -s sample_data/test_species_list.txt -o test_out_Evolinc_II -v 1e-20
 ```
 
