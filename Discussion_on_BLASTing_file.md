@@ -8,7 +8,7 @@ Subject#2_genome.fasta  Query_lincRNAs.fasta  Query_species_abbreviation(four_le
 Subject#3_genome.fasta  Query_lincRNAs.fasta  Query_species_abbreviation(four_letter_code)  Subject#3_species_abbreviation(four_letter_code)
 Subject#4_genome.fasta  Query_lincRNAs.fasta  Query_species_abbreviation(four_letter_code)  Subject#4_species_abbreviation(four_letter_code)                            Subject#4_Known_lincRNAs.fasta
 ```
-* The above represents the columns that should be included in the `BLASTing file`, which is necessary for Evolinc-II to run. Evolinc-II runs through the comparisons one line at a time until it has finished, and then it builds families out of anything sequences it found that pass certain criteria.
+* The above represents the columns that should be included in the `BLASTing file`, which is necessary for Evolinc-II to run. Evolinc-II runs through the comparisons one line at a time until it has finished, and then it builds families out of any sequences it found that pass certain criteria.
 
 * Therefore, it is essential to create this file correctly and to have all of these files located in the same folder.
 
@@ -22,6 +22,7 @@ Alyr_genome.fasta	Atha_lincRNAs.fasta	Atha	Alyr	Alyr_genes.gff	Alyr_known_lincRN
 Crub_genome.fasta	Atha_lincRNAs.fasta	Atha	Crub  	                Crub_known_lincRNAs.fasta
 Lala_genome.fasta	Atha_lincRNAs.fasta	Atha	Lala
 ```
+**Do not end a row with a tab, but instead end it with a new line character (Enter or Return). For PC users, make sure that it is not a carriage return (some linux systems treat carriage returns as if they are not there). For PC users, we recommend using Notepad++ with "View->symbols->All Characters" selected. New line characters are noted by "LF" whereas carriage returns are denoted by "CR". You must have "LF" at the end of a row. Mac/Linux users just need to make sure they press enter at the end of a row.**
 
 **Note that there always has to be a query lincRNA search against the query genome step.** 
 
