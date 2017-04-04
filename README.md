@@ -16,10 +16,10 @@ Since there are several dependencies (can be seen in [Dockerfile](https://hub.do
 
 ```
 # Pull the image from CyVerse Dockerhub
-docker pull cyverse/evolinc-ii:1.0
+docker pull evolinc/evolinc-ii:1.1
 
 # See the command line help for the image
-docker run docker.io/cyverse/evolinc-ii:1.0 -h
+docker run evolinc/evolinc-ii:1.1 -h
 
 # Download the test data
 wget -qO- https://github.com/Evolinc/Evolinc-II/releases/download/v1.0/sample_data.zip | bsdtar -xvf-
