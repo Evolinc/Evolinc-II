@@ -22,10 +22,11 @@ docker pull evolinc/evolinc-ii:1.1
 docker run evolinc/evolinc-ii:1.1 -h
 
 # Download the test data
-wget -qO- https://github.com/Evolinc/Evolinc-II/releases/download/v1.0/sample_data.zip | bsdtar -xvf-
+wget https://github.com/Evolinc/Evolinc-II/releases/download/v1.0/sample_data.zip
+unzip sample_data.zip
 
 # Run Evolinc-II on the test data
-docker run --rm -v $(pwd):/working-dir -w /working-dir docker.io/cyverse/evolinc-ii:1.0 -b sample_data/Blasting_list.txt -l sample_data/Evolinc-II Sample_query_lincRNA_data_set_for_webinar.fasta -q Atha -i sample_data -s sample_data/test_species_list.txt -o test_out -v 1e-20
+docker run --rm -v $(pwd):/working-dir -w /working-dir evolinc/evolinc-ii:1.1 -b sample_data/Blasting_list.txt -l sample_data/Sample_query_lincRNA_data_set_for_webinar.fasta -q Atha -i sample_data -s sample_data/test_species_list.txt -o test_out -v 1e-20
 ```
 
 ### Using CyVerse Discovery Environment
