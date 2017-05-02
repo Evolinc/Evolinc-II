@@ -1,4 +1,4 @@
-# EVOLINC-II 1.3
+# EVOLINC-II 1.2
 Evolinc-II pipeline is designed to perform a series of comparative genomic and transcriptomic analyses across an evolutionary timescale of the user’s choosing and on any number (1-1000s) of query lincRNAs. 
 
 Evolinc-II minimally requires the following input data
@@ -16,17 +16,17 @@ Since there are several dependencies (can be seen in [Dockerfile](https://hub.do
 
 ```
 # Pull the image from CyVerse Dockerhub
-docker pull evolinc/evolinc-ii:1.3
+docker pull evolinc/evolinc-ii:1.2
 
 # See the command line help for the image
-docker run evolinc/evolinc-ii:1.3 -h
+docker run evolinc/evolinc-ii:1.2 -h
 
 # Download the test data
 wget https://github.com/Evolinc/Evolinc-II/releases/download/v1.0/sample_data.zip
 unzip sample_data.zip
 
 # Run Evolinc-II on the test data
-docker run --rm -v $(pwd):/working-dir -w /working-dir evolinc/evolinc-ii:1.3 -b sample_data/Blasting_list.txt -l sample_data/Sample_query_lincRNA_data_set_for_webinar.fasta -q Atha -i sample_data -s sample_data/test_species_list.txt -o test_out -v 1e-20
+docker run --rm -v $(pwd):/working-dir -w /working-dir evolinc/evolinc-ii:1.2 -b sample_data/Blasting_list.txt -l sample_data/Sample_query_lincRNA_data_set_for_webinar.fasta -q Atha -i sample_data -s sample_data/test_species_list.txt -o test_out -v 1e-20
 ```
 
 ### Using CyVerse Discovery Environment
@@ -43,4 +43,4 @@ The sources in this github repository are copyright free. Thus you are allowed t
 # Citing Evolinc-II
 If you have used Evolinc-I manuscript in your research, please cite as below..
 
-*Andrew D. Nelson&ast;, Upendra K. Devisetty&ast;, Kyle Palos, Asher K. Haug-Baltzell, Eric Lyons, Mark A. Beilstein (2017). "Evolinc: a comparative transcriptomics and genomics pipeline for quickly identifying sequence conserved lincRNAs forfunctional analysis". Frontiers in Genetics. 1(10)*
+*Andrew D. Nelson&ast;, Upendra K. Devisetty&ast;, Kyle Palos, Asher K. Haug-Baltzell, Eric Lyons, Mark A. Beilstein (2017). "Evolinc: a comparative transcriptomics and genomics pipeline for quickly identifying sequence conserved lincRNAs for functional analysis". Frontiers in Genetics. 1(10)*
