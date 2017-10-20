@@ -1,4 +1,4 @@
-FROM ubuntu:14.04.3
+FROM ubuntu:16.04
 MAINTAINER Upendra Devisetty <upendra@cyverse.org>
 LABEL Description "This Dockerfile is for evolinc-ii pipeline"
 
@@ -12,13 +12,8 @@ RUN apt-get update && apt-get install -y g++ \
 		curl \
 		python-matplotlib \
 		python-numpy \
-        python-pandas
-
-ENV BINPATH /usr/bin
-
-# NCBI Blast download
-RUN curl ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.3.0/ncbi-blast-2.3.0+-x64-linux.tar.gz > ncbi-blast-2.3.0+-x64-linux.tar.gz
-RUN tar xvf ncbi-blast-2.3.0+-x64-linux.tar.gz
+        python-pandas \
+        openjdk-8-jdk
 
 # Bedtools
 RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz
@@ -72,11 +67,6 @@ RUN apt-get install -y \
 RUN cpanm -v  \
  CJFIELDS/BioPerl-1.6.924.tar.gz 
 
-# Setting paths to all the softwares
-ENV PATH /ncbi-blast-2.3.0+/bin/:$PATH
-ENV PATH /bedtools2/bin/:$PATH
-ENV PATH /cufflinks-2.2.1.Linux_x86_64/:$PATH
-
 # Biopython
 RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
 RUN python get-pip.py
@@ -98,13 +88,14 @@ RUN make -f Makefile.SSE3.PTHREADS.gcc
 RUN cp raxmlHPC-PTHREADS-SSE3 /usr/bin/
 WORKDIR /
 
-# Install Java8
-RUN apt-get install -y software-properties-common && \
-    add-apt-repository ppa:webupd8team/java -y && \
-    apt-get update && \
-    echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
-    apt-get clean
+# NCBI
+RUN wget -O- ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.6.0/ncbi-blast-2.6.0+-x64-linux.tar.gz | tar zxvf -
+
+# Setting paths to all the softwares
+ENV BINPATH /usr/bin
+ENV PATH /bedtools2/bin/:$PATH
+ENV PATH /cufflinks-2.2.1.Linux_x86_64/:$PATH
+ENV PATH /ncbi-blast-2.6.0+/bin/:$PATH
 
 # Add all the scripts to the root directory Path
 ADD *.py *.pl *.R *.sh *.jar /

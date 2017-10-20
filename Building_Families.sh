@@ -4,7 +4,7 @@
 # Usage: 
 # sh Building_Families.sh  -g subjectgenome.fa -s subject_species -q query_species -l lincRNAs.fa -e subject_gff -k known_lincRNAs -v e_value
 
-while getopts ":l:q:s:f:k:e:g:" opt; do
+while getopts ":l:q:s:f:k:e:g:n:" opt; do
   case $opt in
     l)
       lincRNAfasta=$OPTARG
@@ -26,6 +26,9 @@ while getopts ":l:q:s:f:k:e:g:" opt; do
       ;;
     e)
       value=$OPTARG
+      ;;
+    n)
+      threads=$OPTARG
       ;;  
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -43,6 +46,7 @@ echo "Starting! on $subject_species"
 
 # Formatting the genome
 makeblastdb -logfile stderr.out -in $subject_genome -dbtype nucl -out BLAST_DB/$subject_genome.blast.out
+
 ### Check to see if query FASTA file contains only one lincRNA
 count=$(grep -c ">" $lincRNAfasta)
 param=2
@@ -54,7 +58,7 @@ else
 fi
 
 # Blasting the lincRNA transcripts against the genome to find out the location on the genome And identify if there are any paralogs in the query genome.
-blastn -logfile stderr.out -query $lincRNAfasta -db BLAST_DB/$subject_genome.blast.out -num_threads 4 -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.out
+blastn -logfile stderr.out -query $lincRNAfasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.out
 
 # Remove spaces in the blastout files
 sed 's/ //g' Homology_Search/$subject_species.out > Homology_Search/$subject_species.stripped.out
@@ -113,8 +117,10 @@ fi
 if [ ! -z $known_lincRNAs ]; then 
     # Formatting the known lincRNA's
     makeblastdb -logfile stderr.out -in $known_lincRNAs -dbtype nucl -out BLAST_DB/$known_lincRNAs.blast.out &&
+
     # Blasting to known lincRNAs 
-    blastn -logfile stderr.out -query Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta -db BLAST_DB/$known_lincRNAs.blast.out -num_threads 2 -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.out &&
+    blastn -logfile stderr.out -query Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta -db BLAST_DB/$known_lincRNAs.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.out &&
+
     # Filtering the output
     python /filter_lincRNA_sequences_annotation.py Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.out Homology_Search/$subject_species.lincRNA_annotation.list.txt &&
     # Assign the annotation of lincRNA to the known lincRNA
@@ -145,7 +151,7 @@ perl /split_fasta_into_200nt.pl Homology_Search/$query_species.$subject_species.
 #At this point, we are merely repeating the entire BLAST step with smaller pieces
 
 # Blasting the lincRNA transcripts against the genome to find out the location on the genome And identify if there are any paralogs in the query genome.
-blastn -logfile stderr.out -query Homology_Search/$query_species.$subject_species.into_200_bin.fasta -db BLAST_DB/$subject_genome.blast.out -num_threads 4 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.into_200_bin.fasta.out
+blastn -logfile stderr.out -query Homology_Search/$query_species.$subject_species.into_200_bin.fasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.into_200_bin.fasta.out
 
 # Remove spaces in the blastout files
 sed 's/ //g' Homology_Search/$subject_species.into_200_bin.fasta.out > Homology_Search/$subject_species.into_200_bin_stripped.out

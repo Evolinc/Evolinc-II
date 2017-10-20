@@ -6,7 +6,7 @@
 
 usage() {
       echo ""
-      echo "Usage : sh $0 -g genome -s ortho_sequences -f ortho_gff -a query_gff -b query_sp -c query_genome -e evalue"
+      echo "Usage : sh $0 -g genome -s ortho_sequences -f ortho_gff -a query_gff -b query_sp -c query_genome -e evalue -n threads"
       echo ""
 
 cat <<'EOF'
@@ -24,13 +24,15 @@ cat <<'EOF'
 
      -e    <e-value>
 
+     -n     <Number of threads>
+
      -h    Show this usage information
 EOF
     exit 0
 }
 
 
-while getopts ":g:s:f:a:hb:c:e:" opt; do
+while getopts ":g:s:f:a:hb:c:e:n:" opt; do
   case $opt in
     g)
      Genome=$OPTARG
@@ -52,6 +54,9 @@ while getopts ":g:s:f:a:hb:c:e:" opt; do
      ;;
     e)
      value=$OPTARG # e-value
+     ;;
+    n)
+     threads=$OPTARG
      ;;  
     h) 
      usage 
@@ -77,12 +82,14 @@ mkdir -p Reciprocal_BLAST_Return
 DB=$(ls Reciprocal_BLAST_DB/ | grep -m 1 "$query_genome")
 if [[ ! -a $DB ]]; then
     makeblastdb -logfile stderr.out -in $query_genome -dbtype nucl -out Reciprocal_BLAST_DB/$query_genome.blast.out
+
 else
     # If a genome DB did exist, Blasting the putative ortholog sequences against the query genome genome to find out the location on the genome.
-    blastn -logfile stderr.out -query $Put_ortholog -db Reciprocal_BLAST_DB/$query_genome.blast.out -num_threads 4 -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out
+    blastn -logfile stderr.out -query $Put_ortholog -db Reciprocal_BLAST_DB/$query_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out
+
 fi
 # If a genome DB did not exist, Blasting the putative ortholog sequences against the query genome genome to find out the location on the genome.
-blastn -logfile stderr.out -query $Put_ortholog -db Reciprocal_BLAST_DB/$query_genome.blast.out -num_threads 4 -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out
+blastn -logfile stderr.out -query $Put_ortholog -db Reciprocal_BLAST_DB/$query_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out
 
 # Remove spaces in the blastout files
 sed 's/ //g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out > Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out

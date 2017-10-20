@@ -2,9 +2,12 @@
 #author: Andrew Nelson; andrew.d.l.nelson@gmail.com
 # Script to perform comparative genomic analysis of lincRNAs
 
+set -x
+set -e
+
 usage() {
       echo ""
-      echo "Usage : sh $0 -b BLASTing_list -l Query_lincRNA -q Query_species -i Input_folder -s Species_list -v evalue -t species_tree -o Output_folder"
+      echo "Usage : sh $0 -b BLASTing_list -l Query_lincRNA -q Query_species -i Input_folder -s Species_list -v evalue -n threads -t species_tree -o Output_folder"
       echo ""
 
 cat <<'EOF'
@@ -19,6 +22,8 @@ cat <<'EOF'
   -s </path/to/species list>
 
   -v <e-value>
+
+  -n <number of threads>
   
   -t </path/to/species/tree>
 
@@ -30,7 +35,7 @@ EOF
     exit 0
 }
 
-while getopts ":hb:q:l:i:s:n:o:v:t:" opt; do
+while getopts ":hb:q:l:i:s:o:v:n:t:" opt; do
   case $opt in
     b)
      Blasting_list=$OPTARG #This is a five-column tab-delimited list in the following order:
@@ -47,6 +52,9 @@ while getopts ":hb:q:l:i:s:n:o:v:t:" opt; do
      ;;
     s)
      sp_list=$OPTARG # Species list 
+     ;;
+    n)
+     threads=$OPTARG # threads
      ;;
     v)
      value=$OPTARG # e-value
@@ -89,7 +97,7 @@ grep ">" $query_lincRNA | sed 's/>//' > Orthologs/lincRNA.list
 
 # Initiate search for putative orthologs
 echo "***Starting lincRNA to Genome Comparisons***"
-python /startup_script.py -b $Blasting_list -i $input_folder -v $value
+python /startup_script.py -b $Blasting_list -i $input_folder -v $value -n $threads
 echo "***Finished with lincRNA to Genome Comparisons***"
 
 #Create a list of all genomes, lincRNA ortholog, and gff files to set up reciprocal BLAST
@@ -115,7 +123,7 @@ rm Reciprocal_lincRNAs_coord_list.txt
 
 # Confirm the reciprocity of the putative orthologs
 echo "***Starting Reciprocal Search***"
-python /Reciprocal_BLAST_startup_script.py -b Reciprocal_list.txt -v $value
+python /Reciprocal_BLAST_startup_script.py -b Reciprocal_list.txt -v $value -n $threads
 echo "***Finished with Reciprocal Search***"
 
 #Create a CoGe viewable bed file of TBH

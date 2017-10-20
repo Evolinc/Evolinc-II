@@ -7,7 +7,7 @@ import getopt
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'hb:i:v:', ['inputfile=', 'inputfolder=', 'e_value=', 'help'])
+    opts, args = getopt.getopt(sys.argv[1:], 'hb:i:v:n:', ['inputfile=', 'inputfolder=', 'e_value=', 'threads=', 'help'])
 except getopt.GetoptError:
     usage()
     sys.exit(2)
@@ -22,6 +22,8 @@ for opt, arg in opts:
         inputfolder_name = arg
     elif opt in ('-v', '--value'):
         value = arg
+    elif opt in ('-n', '--threads'):
+        threads = arg
     else:
         usage()
         sys.exit(2)
@@ -54,22 +56,22 @@ with open(inputfile_name, 'r') as inpt:
                     known_lincRNAs = inputfolder_name + "/" + known_lincRNAs
 
                     if subject_gff != '':
-                        query = "bash /Building_Families.sh -g %s -l %s -q %s -s %s -f %s -k %s -e %s" % \
-                                (subject, lincRNA, query_spp, subject_spp, subject_gff, known_lincRNAs, value)
+                        query = "bash /Building_Families.sh -g %s -l %s -q %s -s %s -f %s -k %s -e %s -n %s" % \
+                                (subject, lincRNA, query_spp, subject_spp, subject_gff, known_lincRNAs, value, threads)
 
                     else:
-                        query = 'bash /Building_Families.sh -g %s -l %s -q %s -s %s -k %s -e %s' % \
-                                (subject, lincRNA, query_spp, subject_spp, known_lincRNAs, value)
+                        query = 'bash /Building_Families.sh -g %s -l %s -q %s -s %s -k %s -e %s -n %s' % \
+                                (subject, lincRNA, query_spp, subject_spp, known_lincRNAs, value, threads)
 
                 except IndexError:
                     subject_gff = line_split[4]
                     subject_gff = inputfolder_name + "/" + subject_gff
 
-                    query = 'bash /Building_Families.sh -g %s -l %s -q %s -s %s -f %s -e %s' % \
-                            (subject, lincRNA, query_spp, subject_spp, subject_gff, value)
+                    query = 'bash /Building_Families.sh -g %s -l %s -q %s -s %s -f %s -e %s -n %s' % \
+                            (subject, lincRNA, query_spp, subject_spp, subject_gff, value, threads)
             except IndexError:
-                query = 'bash /Building_Families.sh -g %s -l %s -q %s -s %s -e %s' % \
-                        (subject, lincRNA, query_spp, subject_spp, value)
+                query = 'bash /Building_Families.sh -g %s -l %s -q %s -s %s -e %s -n %s' % \
+                        (subject, lincRNA, query_spp, subject_spp, value, threads)
      
         call(query, shell=True)
   
