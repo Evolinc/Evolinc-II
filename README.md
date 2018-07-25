@@ -1,5 +1,7 @@
-[![Layers](https://shields.beevelop.com/docker/pulls/evolinc/evolinc-ii.svg?style=flat-square)(https://links.beevelop.com/d-shields)
-[![Size](https://shields.beevelop.com/docker/image/layers/evolinc/evolinc-ii/1.2.svg?style=flat-square)(https://links.beevelop.com/d-shields)
+[![Docker Pulls](https://img.shields.io/docker/pulls/evolinc/evolinc-ii.svg)](https://hub.docker.com/r/evolinc/evolinc-ii/)
+[![Docker Stars](https://img.shields.io/docker/stars/evolinc/evolinc-ii.svg)](https://hub.docker.com/r/evolinc/evolinc-ii/)
+[![Docker Build Status](https://img.shields.io/docker/build/evolinc/evolinc-ii.svg)](https://hub.docker.com/r/evolinc/evolinc-ii/)
+[![Docker Automated build](https://img.shields.io/docker/automated/evolinc/evolinc-ii.svg)](https://hub.docker.com/r/evolinc/evolinc-ii/)
 [![Release](https://shields.beevelop.com/github/release/Evolinc/Evolinc-II.svg?style=flat-square)](https://github.com/Evolinc/Evolinc-II/releases)
 
 # EVOLINC-II 1.2
