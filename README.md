@@ -1,3 +1,7 @@
+[![Layers](https://shields.beevelop.com/docker/pulls/evolinc/evolinc-ii.svg?style=flat-square)(https://links.beevelop.com/d-shields)
+[![Size](https://shields.beevelop.com/docker/image/layers/evolinc/evolinc-ii/1.2.svg?style=flat-square)(https://links.beevelop.com/d-shields)
+[![Release](https://shields.beevelop.com/github/release/Evolinc/Evolinc-II.svg?style=flat-square)](https://github.com/Evolinc/Evolinc-II/releases)
+
 # EVOLINC-II 1.2
 Evolinc-II pipeline is designed to perform a series of comparative genomic and transcriptomic analyses across an evolutionary timescale of the user’s choosing and on any number (1-1000s) of query lincRNAs. 
 
