@@ -100,7 +100,7 @@ RUN apt-get install -y samtools
 
 # Setting paths to all the softwares
 ENV BINPATH /usr/bin
-ENV PATH /minimap2-2.17_x64-linux/minimap2
+ENV PATH /minimap2-2.17_x64-linux/:$PATH
 ENV PATH /bedtools2/bin/:$PATH
 ENV PATH /cufflinks-2.2.1.Linux_x86_64/:$PATH
 ENV PATH /ncbi-blast-2.6.0+/bin/:$PATH
