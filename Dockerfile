@@ -73,7 +73,7 @@ RUN python get-pip.py
 RUN pip install biopython
 
 # R libraries
-RUN echo "deb http://cran.cnr.berkeley.edu/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list
+RUN echo "deb http://cloud.r-project.org/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9
 RUN apt-get update
 RUN apt-get install -y r-base r-base-dev
