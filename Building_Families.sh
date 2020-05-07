@@ -45,7 +45,7 @@ echo "Building_Families.sh script is reporting this"
 echo "Starting! on $subject_species"
 
 # Formatting the genome
-makeblastdb -logfile stderr.out -in $subject_genome -dbtype nucl -out BLAST_DB/$subject_genome.blast.out
+#makeblastdb -logfile stderr.out -in $subject_genome -dbtype nucl -out BLAST_DB/$subject_genome.blast.out
 
 ### Check to see if query FASTA file contains only one lincRNA
 count=$(grep -c ">" $lincRNAfasta)
@@ -58,13 +58,25 @@ else
 fi
 
 # Blasting the lincRNA transcripts against the genome to find out the location on the genome And identify if there are any paralogs in the query genome.
-blastn -logfile stderr.out -query $lincRNAfasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.out
+#blastn -logfile stderr.out -query $lincRNAfasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.out
+
+#Moving the aligner to Minimap due to speed issues with BLASTn. The algorithm used favors longer read alignments and is used to align nanopore or pacbio reads to genomes.
+minimap2 -t 24 -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o $subject_species.sam $subject_genome $lincRNAfasta
+
+#convert the alignment to bed format, sorted so that the higher quality alignment is first for each query
+samtools sort -@ 24 $subject_species.sam | samtools view -@ 24 -S -b | bamToBed -i stdin | sort -b -k 4,4 -k 5nr,5 >$subject_species.bed
+
+#Convert from bed to gff
+
+Rscript Sample_Rscript.R $subject_species.bed $subject_species.gff $subject_species
+sed -i 's~sequence_feature~exon~g' $subject_species.gff
+sed -i 's~name=~~g' $subject_species.gff && awk '{print $2"_"$9 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" "gene_id " $2 "_" $9 "; " "transcript_id " $2 "_" $9 ";" "\t" "500"}' $subject_species.gff >$subject_species.out.gff
 
 # Remove spaces in the blastout files
-sed 's/ //g' Homology_Search/$subject_species.out > Homology_Search/$subject_species.stripped.out
+#sed 's/ //g' Homology_Search/$subject_species.out > Homology_Search/$subject_species.stripped.out
 
 # Convert blast result to gff
-perl /blast2gff.pl -i Homology_Search/$subject_species.stripped.out -s $subject_species -o Homology_Search/$subject_species.out.gff
+#perl /blast2gff.pl -i Homology_Search/$subject_species.stripped.out -s $subject_species -o Homology_Search/$subject_species.out.gff
 
 ###Sort the gff file and merge the start and stop including the intermediate sequences. Check the merge_close_hits.py script. No need to do this since the script is doing exactly what it is supposed to do.. We can alter the BLAST2GFF.PL file to order the columns in the way that gffread likes. Look at the code starting at line #175 for reordering.
 # Merge close hits in the gff file # Merge the start and stop coordinates
