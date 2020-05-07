@@ -68,7 +68,7 @@ samtools sort -@ 24 Homology_Search/$subject_species.sam | samtools view -@ 24 -
 
 #Convert from bed to gff
 
-Rscript /Bed_to_GFF.R Homology_Search/$subject_species.bed Homology_Search/$subject_species.gff $subject_species
+Rscript /bed_to_gff.R Homology_Search/$subject_species.bed Homology_Search/$subject_species.gff $subject_species
 sed -i 's~sequence_feature~exon~g' Homology_Search/$subject_species.gff
 sed -i 's~name=~~g' Homology_Search/$subject_species.gff && awk '{print $2"_"$9 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" "gene_id " $2 "_" $9 "; " "transcript_id " $2 "_" $9 ";" "\t" "500"}' Homology_Search/$subject_species.gff >Homology_Search/$subject_species.out.gff
 
