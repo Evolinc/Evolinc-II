@@ -93,13 +93,14 @@ WORKDIR /
 RUN wget -O- ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.6.0/ncbi-blast-2.6.0+-x64-linux.tar.gz | tar zxvf -
 
 #minimap2
-RUN conda install minimap2
+RUN curl -L https://github.com/lh3/minimap2/releases/download/v2.17/minimap2-2.17_x64-linux.tar.bz2 | tar -jxvf - ./minimap2-2.17_x64-linux/minimap2
 
 #samtools
-RUN conda install -c bioconda samtools
+RUN apt-get install -y samtools
 
 # Setting paths to all the softwares
 ENV BINPATH /usr/bin
+ENV PATH /minimap2-2.17_x64-linux/minimap2
 ENV PATH /bedtools2/bin/:$PATH
 ENV PATH /cufflinks-2.2.1.Linux_x86_64/:$PATH
 ENV PATH /ncbi-blast-2.6.0+/bin/:$PATH
