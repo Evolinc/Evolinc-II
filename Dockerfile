@@ -80,6 +80,7 @@ RUN apt-get install -y r-base r-base-dev
 RUN Rscript -e 'install.packages("getopt", dependencies = TRUE, repos="http://cran.rstudio.com/");'
 RUN Rscript -e 'install.packages("reshape2", dependencies = TRUE, repos="http://cran.rstudio.com/");'
 RUN Rscript -e 'install.packages("dplyr", dependencies = TRUE, repos="http://cran.rstudio.com/");'
+RUN Rscript -e 'install.packages("rtracklayer", dependencies = TRUE, repos="http://cran.rstudio.com/");'
 
 # RAxML
 RUN git clone https://github.com/stamatak/standard-RAxML.git
@@ -90,6 +91,12 @@ WORKDIR /
 
 # NCBI
 RUN wget -O- ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.6.0/ncbi-blast-2.6.0+-x64-linux.tar.gz | tar zxvf -
+
+#minimap2
+RUN conda install minimap2
+
+#samtools
+RUN conda install -c bioconda samtools
 
 # Setting paths to all the softwares
 ENV BINPATH /usr/bin
