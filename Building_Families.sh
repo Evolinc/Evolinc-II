@@ -45,7 +45,7 @@ echo "Building_Families.sh script is reporting this"
 echo "Starting! on $subject_species"
 
 # Formatting the genome
-makeblastdb -logfile stderr.out -in $subject_genome -dbtype nucl -out BLAST_DB/$subject_genome.blast.out
+#makeblastdb -logfile stderr.out -in $subject_genome -dbtype nucl -out BLAST_DB/$subject_genome.blast.out
 
 ### Check to see if query FASTA file contains only one lincRNA
 count=$(grep -c ">" $lincRNAfasta)
@@ -58,13 +58,25 @@ else
 fi
 
 # Blasting the lincRNA transcripts against the genome to find out the location on the genome And identify if there are any paralogs in the query genome.
-blastn -logfile stderr.out -query $lincRNAfasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.out
+#blastn -logfile stderr.out -query $lincRNAfasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.out
+
+#Moving the aligner to Minimap due to speed issues with BLASTn. The algorithm used favors longer read alignments and is used to align nanopore or pacbio reads to genomes.
+minimap2 -t 24 -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Homology_Search/$subject_species.sam $subject_genome $lincRNAfasta
+
+#convert the alignment to bed format, sorted so that the higher quality alignment is first for each query
+samtools sort -@ 24 Homology_Search/$subject_species.sam | samtools view -@ 24 -S -b | bamToBed -i stdin | sort -b -k 4,4 -k 5nr,5 >Homology_Search/$subject_species.bed
+
+#Convert from bed to gff
+
+Rscript /bed_to_gff.R Homology_Search/$subject_species.bed Homology_Search/$subject_species.gff $subject_species
+sed -i 's~sequence_feature~exon~g' Homology_Search/$subject_species.gff
+sed -i 's~name=~~g' Homology_Search/$subject_species.gff && awk '{print $2"_"$9 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" "gene_id " $2 "_" $9 "; " "transcript_id " $2 "_" $9 ";" "\t" "500"}' Homology_Search/$subject_species.gff >Homology_Search/$subject_species.out.gff
 
 # Remove spaces in the blastout files
-sed 's/ //g' Homology_Search/$subject_species.out > Homology_Search/$subject_species.stripped.out
+#sed 's/ //g' Homology_Search/$subject_species.out > Homology_Search/$subject_species.stripped.out
 
 # Convert blast result to gff
-perl /blast2gff.pl -i Homology_Search/$subject_species.stripped.out -s $subject_species -o Homology_Search/$subject_species.out.gff
+#perl /blast2gff.pl -i Homology_Search/$subject_species.stripped.out -s $subject_species -o Homology_Search/$subject_species.out.gff
 
 ###Sort the gff file and merge the start and stop including the intermediate sequences. Check the merge_close_hits.py script. No need to do this since the script is doing exactly what it is supposed to do.. We can alter the BLAST2GFF.PL file to order the columns in the way that gffread likes. Look at the code starting at line #175 for reordering.
 # Merge close hits in the gff file # Merge the start and stop coordinates
@@ -134,6 +146,8 @@ fi
 
 # Remove duplicate sequences
 perl /Remove_dup_seqs.pl Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.renamed.fasta
+### This is just to keep continuity with below. I removed a section below and I want to make sure everything continues to work before I rename files.
+mv Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.renamed.fasta Homology_Search/$subject_species.$query_species.200nt_plus_full_length_searches.fasta
 
 ### Initiate reiterative BLAST here:
 grep ">" Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.renamed.fasta.dup_removed.fasta |sed 's~^......~~g'| sed 's~_Known_lincRNA~~g'| sed 's~_Known_Gene_Sense~~g' | sed 's~_Known_Gene_Antisense~~g' | sed 's~_TBH_1~~g' | sed 's~_.$~~g' | sed 's~_..$~~g' | sed 's~_...$~~g' | sed 's~>~~g' | sort -u > Homology_Search/List_of_identified_putative_orthologs.txt
@@ -143,7 +157,7 @@ grep -vwf Homology_Search/List_of_identified_putative_orthologs.txt Homology_Sea
 sed -i 's~>~~g' Homology_Search/List_of_non_identified_query_lincRNAs.txt
 perl /singleline.pl $lincRNAfasta > Homology_Search/query_lincRNAs_singleline.fasta
 grep -A 1 -f Homology_Search/List_of_non_identified_query_lincRNAs.txt Homology_Search/query_lincRNAs_singleline.fasta | sed 's~--~~g' > Homology_Search/$query_species.$subject_species.non_identified_from_first_round.fasta
-perl /split_fasta_into_200nt.pl Homology_Search/$query_species.$subject_species.non_identified_from_first_round.fasta > Homology_Search/$query_species.$subject_species.into_200_bin.fasta
+#perl /split_fasta_into_200nt.pl Homology_Search/$query_species.$subject_species.non_identified_from_first_round.fasta > Homology_Search/$query_species.$subject_species.into_200_bin.fasta
 
 ##
 ##
@@ -151,35 +165,35 @@ perl /split_fasta_into_200nt.pl Homology_Search/$query_species.$subject_species.
 #At this point, we are merely repeating the entire BLAST step with smaller pieces
 
 # Blasting the lincRNA transcripts against the genome to find out the location on the genome And identify if there are any paralogs in the query genome.
-blastn -logfile stderr.out -query Homology_Search/$query_species.$subject_species.into_200_bin.fasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.into_200_bin.fasta.out
+#blastn -logfile stderr.out -query Homology_Search/$query_species.$subject_species.into_200_bin.fasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.into_200_bin.fasta.out
 
 # Remove spaces in the blastout files
-sed 's/ //g' Homology_Search/$subject_species.into_200_bin.fasta.out > Homology_Search/$subject_species.into_200_bin_stripped.out
+#sed 's/ //g' Homology_Search/$subject_species.into_200_bin.fasta.out > Homology_Search/$subject_species.into_200_bin_stripped.out
 
 # Convert blast result to gff
-perl /blast2gff.pl -i Homology_Search/$subject_species.into_200_bin_stripped.out -s $subject_species -o Homology_Search/$subject_species.into_200_bin.gff
-skip=Homology_Search/$subject_species.into_200_bin.gff
-if [[ $(du -h "$skip" | cut -f 1) = 0 ]]; then
-  echo "No Matches Found in reiterative BLAST"
-  echo ">No_further_matches_found_by_reiterative_BLAST" >Homology_Search/$subject_species.$query_species.orthologs.into_200_bin_lincRNA_tested.renamed.fasta.dup_removed.fasta
-  echo "#No_further_matches_found_by_reiterative_BLAST" >Homology_Search/$subject_species.into_200_bin.TBH.only.gff
-else
+#perl /blast2gff.pl -i Homology_Search/$subject_species.into_200_bin_stripped.out -s $subject_species -o Homology_Search/$subject_species.into_200_bin.gff
+#skip=Homology_Search/$subject_species.into_200_bin.gff
+#if [[ $(du -h "$skip" | cut -f 1) = 0 ]]; then
+#  echo "No Matches Found in reiterative BLAST"
+#  echo ">No_further_matches_found_by_reiterative_BLAST" >Homology_Search/$subject_species.$query_species.orthologs.into_200_bin_lincRNA_tested.renamed.fasta.dup_removed.fasta
+#  echo "#No_further_matches_found_by_reiterative_BLAST" >Homology_Search/$subject_species.into_200_bin.TBH.only.gff
+#else
   echo "Reiterative BLAST found at least one hit, proceeding to rename and merge, if applicable"
-fi
+#fi
 ###Sort the gff file and merge the start and stop including the intermediate sequences. Check the merge_close_hits.py script. No need to do this since the script is doing exactly what it is supposed to do.. We can alter the BLAST2GFF.PL file to order the columns in the way that gffread likes. Look at the code starting at line #175 for reordering.
 # Merge close hits in the gff file # Merge the start and stop coordinates
-python /merge_close_hits.py Homology_Search/$subject_species.into_200_bin.gff Homology_Search/$subject_species.into_200_bin.merged.gff
+#python /merge_close_hits.py Homology_Search/$subject_species.into_200_bin.gff Homology_Search/$subject_species.into_200_bin.merged.gff
 
-grep "TBH" Homology_Search/$subject_species.into_200_bin.merged.gff > Homology_Search/$subject_species.into_200_bin.TBH.only.gff
+#grep "TBH" Homology_Search/$subject_species.into_200_bin.merged.gff > Homology_Search/$subject_species.into_200_bin.TBH.only.gff
 # Convert gtf to fasta (Instead of using gtftocdna, we will use gffread)
 # Change the file format since the gffread requires the chromosome to be first column
-awk '{print $2 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $9 " " $10  " " $11 " " $12}' Homology_Search/$subject_species.out.merged.gff > temp && mv temp Homology_Search/$subject_species.out.merged.gff
-awk '{print $2 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $9 " " $10  " " $11 " " $12}' Homology_Search/$subject_species.into_200_bin.TBH.only.gff > temp && mv temp Homology_Search/$subject_species.into_200_bin.TBH.only.gff
+#awk '{print $2 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $9 " " $10  " " $11 " " $12}' Homology_Search/$subject_species.out.merged.gff > temp && mv temp Homology_Search/$subject_species.out.merged.gff
+#awk '{print $2 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $9 " " $10  " " $11 " " $12}' Homology_Search/$subject_species.into_200_bin.TBH.only.gff > temp && mv temp Homology_Search/$subject_species.into_200_bin.TBH.only.gff
 #gffread Homology_Search/$subject_species.out.merged.gff -g $subject_genome -w Homology_Search/$subject_species.$query_species.orthologs.fasta
-gffread Homology_Search/$subject_species.into_200_bin.TBH.only.gff -g $subject_genome -w Homology_Search/$subject_species.$query_species.into_200_bin.TBH.orthologs.fasta
+#gffread Homology_Search/$subject_species.into_200_bin.TBH.only.gff -g $subject_genome -w Homology_Search/$subject_species.$query_species.into_200_bin.TBH.orthologs.fasta
 echo "Finished with reiterative BLAST"
-cat Homology_Search/$subject_species.$query_species.into_200_bin.TBH.orthologs.fasta Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.renamed.fasta.dup_removed.fasta > Homology_Search/$subject_species.$query_species.200nt_plus_full_length_searches.fasta
-cat Homology_Search/$subject_species.into_200_bin.TBH.only.gff Homology_Search/$subject_species.out.TBH.only.gff > Homology_Search/$subject_species.200nt_plus_full_length_searches.gff
+#cat Homology_Search/$subject_species.$query_species.into_200_bin.TBH.orthologs.fasta Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.renamed.fasta.dup_removed.fasta > Homology_Search/$subject_species.$query_species.200nt_plus_full_length_searches.fasta
+mv Homology_Search/$subject_species.out.TBH.only.gff Homology_Search/$subject_species.200nt_plus_full_length_searches.gff
 sort -k 1,1 -k 4,4n Homology_Search/$subject_species.200nt_plus_full_length_searches.gff > Homology_Search/$subject_species.200nt_plus_full_length_searches_sorted.gff
 ### End of reiterative BLAST section
 
