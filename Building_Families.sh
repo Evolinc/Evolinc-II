@@ -64,7 +64,10 @@ fi
 minimap2 -t 24 -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Homology_Search/$subject_species.sam $subject_genome $lincRNAfasta
 
 #convert the alignment to bed format, sorted so that the higher quality alignment is first for each query
-samtools sort -@ 24 Homology_Search/$subject_species.sam | samtools view -@ 24 -S -b | bamToBed -i stdin | sort -b -k 4,4 -k 5nr,5 >Homology_Search/$subject_species.bed
+samtools sort -@ 24 Homology_Search/$subject_species.sam > Homology_Search/$subject_species.sorted.sam
+samtools view -@ 24 -S -b Homology_Search/$subject_species.sorted.sam > Homology_Search/$subject_species.sorted.bam 
+bamToBed -i Homology_Search/$subject_species.sorted.bam > Homology_Search/$subject_species.sorted.bed 
+sort -b -k 4,4 -k 5nr,5 Homology_Search/$subject_species.sorted.bed >Homology_Search/$subject_species.bed
 
 #Convert from bed to gff
 
