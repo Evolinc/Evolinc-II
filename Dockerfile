@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y g++ \
         	python-pandas \
 		perl \
 		bioperl \
+		gnupg2 \
         	openjdk-8-jdk
 
 #Libcurl developer tools
