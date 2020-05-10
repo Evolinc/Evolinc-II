@@ -104,8 +104,6 @@ RUN ./configure --prefix=/samtools
 RUN make
 RUN make install
 
-export PATH=/where/to/install/bin:$PATH
-
 
 # Setting paths to all the softwares
 ENV BINPATH /usr/bin
