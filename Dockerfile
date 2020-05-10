@@ -2,6 +2,7 @@ FROM ubuntu:18.04
 MAINTAINER Upendra Devisetty <upendra@cyverse.org>
 LABEL Description "This Dockerfile is for evolinc-ii pipeline"
 
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 RUN apt-get update && apt-get install -y g++ \
 		make \
 		git \
