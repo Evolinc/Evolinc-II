@@ -99,10 +99,10 @@ RUN tar -jxvf minimap2-2.17_x64-linux.tar.bz2
 #samtools
 RUN wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
 RUN tar -jxvf samtools-1.10.tar.bz2
-RUN cd samtools-1.10
-RUN ./configure --prefix=/samtools
-RUN make
-RUN make install
+RUN cd samtools-1.10 \
+	&& ./configure --prefix=/samtools \
+	&& make \
+	&& make install
 
 
 # Setting paths to all the softwares
