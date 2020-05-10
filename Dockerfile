@@ -3,7 +3,6 @@ MAINTAINER Upendra Devisetty <upendra@cyverse.org>
 LABEL Description "This Dockerfile is for evolinc-ii pipeline"
 
 RUN apt-get update && apt-get install -y g++ \
-		libssl-dev/unstable \
 		make \
 		git \
 		zlib1g-dev \
