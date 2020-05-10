@@ -3,7 +3,7 @@ MAINTAINER Upendra Devisetty <upendra@cyverse.org>
 LABEL Description "This Dockerfile is for evolinc-ii pipeline"
 
 RUN apt-get update && apt-get install -y g++ \
-		libcurl4-openssl-dev \
+		libssl-dev/unstable \
 		make \
 		git \
 		zlib1g-dev \
@@ -16,6 +16,14 @@ RUN apt-get update && apt-get install -y g++ \
         python-pandas \
         openjdk-8-jdk
 
+#Libcurl developer tools
+RUN wget https://github.com/curl/curl/releases/download/curl-7_55_0/curl-7.55.0.tar.gz
+RUN tar zxvf curl-7.55.0.tar.gz curl-7.55.0/
+RUN cd curl-7.55.0/ \
+	&& ./configure \
+	&& make \
+	&& make install
+	
 # Bedtools
 RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz
 RUN tar zxvf bedtools-2.26.0.tar.gz
