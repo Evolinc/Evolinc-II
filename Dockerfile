@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y g++ \
 		python-matplotlib \
 		python-numpy \
         	python-pandas \
+		perl \
 		bioperl \
         	openjdk-8-jdk
 
@@ -36,46 +37,6 @@ RUN wget -O- http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cuffl
 
 # Mafft
 RUN apt-get install -y mafft
-
-# cpan
-RUN apt-get install -y cpanminus
-
-# Install BioPerl dependancies, mostly from cpan
-RUN apt-get install --yes \
- libpixman-1-0 \
- libpixman-1-dev \
- graphviz \
- libxml-parser-perl \
- libsoap-lite-perl 
-
-RUN cpanm Test::Most \
- Algorithm::Munkres \
- Array::Compare Clone \
- PostScript::TextBlock \
- SVG \
- SVG::Graph \
- Set::Scalar \
- Sort::Naturally \
- Graph \
- GraphViz \
- HTML::TableExtract \
- Convert::Binary::C \
- Math::Random \
- Error \
- Spreadsheet::ParseExcel \
- XML::Parser::PerlSAX \
- XML::SAX::Writer \
- XML::Twig XML::Writer
-
-RUN apt-get install -y \
- libxml-libxml-perl \
- libxml-dom-xpath-perl \
- libxml-libxml-simple-perl \
- libxml-dom-perl
-
-# Install BioPerl last built
-RUN cpanm -v  \
- CJFIELDS/BioPerl-1.6.924.tar.gz 
 
 # Biopython
 RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
