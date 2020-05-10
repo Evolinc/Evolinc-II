@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y g++ \
 RUN wget https://github.com/curl/curl/releases/download/curl-7_55_0/curl-7.55.0.tar.gz
 RUN tar zxvf curl-7.55.0.tar.gz curl-7.55.0/
 RUN cd curl-7.55.0/ \
-	&& ./configure \
+	&& ./configure --with-ssl \
 	&& make \
 	&& make install
 	
