@@ -13,8 +13,9 @@ RUN apt-get update && apt-get install -y g++ \
 		curl \
 		python-matplotlib \
 		python-numpy \
-        python-pandas \
-        openjdk-8-jdk
+        	python-pandas \
+		bioperl \
+        	openjdk-8-jdk
 
 #Libcurl developer tools
 RUN wget https://github.com/curl/curl/releases/download/curl-7_55_0/curl-7.55.0.tar.gz
