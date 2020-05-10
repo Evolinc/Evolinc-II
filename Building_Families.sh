@@ -61,11 +61,11 @@ fi
 #blastn -logfile stderr.out -query $lincRNAfasta -db BLAST_DB/$subject_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.out
 
 #Moving the aligner to Minimap due to speed issues with BLASTn. The algorithm used favors longer read alignments and is used to align nanopore or pacbio reads to genomes.
-minimap2 -t 24 -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Homology_Search/$subject_species.sam $subject_genome $lincRNAfasta
+minimap2 -t $threads -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Homology_Search/$subject_species.sam $subject_genome $lincRNAfasta
 
 #convert the alignment to bed format, sorted so that the higher quality alignment is first for each query
-samtools sort -@ 24 Homology_Search/$subject_species.sam > Homology_Search/$subject_species.sorted.sam
-samtools view -@ 24 -S -b Homology_Search/$subject_species.sorted.sam > Homology_Search/$subject_species.sorted.bam 
+samtools sort -@ $threads Homology_Search/$subject_species.sam -o Homology_Search/$subject_species.sorted.sam
+samtools view -@ $threads -S -b Homology_Search/$subject_species.sorted.sam -o Homology_Search/$subject_species.sorted.bam 
 bamToBed -i Homology_Search/$subject_species.sorted.bam > Homology_Search/$subject_species.sorted.bed 
 sort -b -k 4,4 -k 5nr,5 Homology_Search/$subject_species.sorted.bed >Homology_Search/$subject_species.bed
 
