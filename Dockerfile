@@ -97,7 +97,15 @@ RUN wget https://github.com/lh3/minimap2/releases/download/v2.17/minimap2-2.17_x
 RUN tar -jxvf minimap2-2.17_x64-linux.tar.bz2
 
 #samtools
-RUN apt-get install -y samtools
+RUN wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2
+RUN tar -jxvf samtools-1.10.tar.bz2
+RUN cd samtools-1.10
+RUN ./configure --prefix=/samtools
+RUN make
+RUN make install
+
+export PATH=/where/to/install/bin:$PATH
+
 
 # Setting paths to all the softwares
 ENV BINPATH /usr/bin
@@ -105,6 +113,7 @@ ENV PATH /minimap2-2.17_x64-linux/:$PATH
 ENV PATH /bedtools2/bin/:$PATH
 ENV PATH /cufflinks-2.2.1.Linux_x86_64/:$PATH
 ENV PATH /ncbi-blast-2.6.0+/bin/:$PATH
+ENV PATH /samtools-1.10/:$PATH
 
 # Add all the scripts to the root directory Path
 ADD *.py *.pl *.R *.sh *.jar /
