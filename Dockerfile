@@ -73,14 +73,15 @@ RUN python get-pip.py
 RUN pip install biopython
 
 # R libraries
-RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/" >> /etc/apt/sources.list
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+RUN echo "deb http://cloud.r-project.org/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9
 RUN apt-get update
 RUN apt-get install -y r-base r-base-dev
+RUN Rscript -e 'install.packages("BiocManager")'
 RUN Rscript -e 'install.packages("getopt", dependencies = TRUE, repos="http://cran.rstudio.com/");'
 RUN Rscript -e 'install.packages("reshape2", dependencies = TRUE, repos="http://cran.rstudio.com/");'
 RUN Rscript -e 'install.packages("dplyr", dependencies = TRUE, repos="http://cran.rstudio.com/");'
-RUN Rscript -e 'install.packages("rtracklayer", dependencies = TRUE, repos="http://cran.rstudio.com/");'
+RUN Rscript -e 'BiocManager::install("rtracklayer", dependencies = TRUE);'
 
 # RAxML
 RUN git clone https://github.com/stamatak/standard-RAxML.git
