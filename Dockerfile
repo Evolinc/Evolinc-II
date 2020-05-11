@@ -19,14 +19,6 @@ RUN apt-get update && apt-get install -y g++ \
 		bioperl \
 		gnupg2 \
         	openjdk-8-jdk
-
-#Libcurl developer tools
-RUN wget https://github.com/curl/curl/releases/download/curl-7_55_0/curl-7.55.0.tar.gz
-RUN tar zxvf curl-7.55.0.tar.gz curl-7.55.0/
-RUN cd curl-7.55.0/ \
-	&& ./configure --with-ssl \
-	&& make \
-	&& make install
 	
 # Bedtools
 RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz
