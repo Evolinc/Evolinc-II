@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y g++ \
 		zlib1g-dev \
 		libcurl4-openssl-dev \
 		libssl-dev \
+		libxml2-dev \
 		python \
 		perl \
 		wget \
