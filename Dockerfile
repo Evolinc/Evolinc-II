@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y g++ \
 		make \
 		git \
 		zlib1g-dev \
+		libcurl4-openssl-dev \
 		python \
 		perl \
 		wget \
