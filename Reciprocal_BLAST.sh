@@ -163,7 +163,7 @@ sed -i 's~_TBH_.~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fr
 # Move the fragment gff file up one directory so that it doesn't get deleted
 cp Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged_reciprocal_sorted.gff .
 
-find ./Reciprocal_BLAST_Return -type f ! -name '*final*' -delete
+#find ./Reciprocal_BLAST_Return -type f ! -name '*final*' -delete
 python /assign_annotation_ortholog.py ../Orthologs/$Put_ortholog Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.for.renaming.final.txt ../Orthologs/$Put_ortholog.orthologs.identified.fasta
 rm -f ../Orthologs/$Put_ortholog
 perl /singleline.pl ../Orthologs/$Put_ortholog.orthologs.identified.fasta >../Orthologs/$Put_ortholog.orthologs.identified.singleline.fasta
@@ -172,5 +172,5 @@ grep -A 1 -f Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.final.list.for.poo
 #Clean things up a bit
 rm -f ../Orthologs/$Put_ortholog.orthologs.identified.fasta
 rm -f ../Orthologs/$Put_ortholog.orthologs.identified.singleline.fasta
-find ./Reciprocal_BLAST_Return -type f ! -name '*renaming*' -delete
+#find ./Reciprocal_BLAST_Return -type f ! -name '*renaming*' -delete
 echo "Finished with $Put_ortholog"
