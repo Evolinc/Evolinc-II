@@ -137,7 +137,7 @@ cut -f 1,2,4,5,10,11,13,14 Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.comp
 awk -F'\t' '{gsub(/_Known.*/,"",$6); print}' Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.comparison.filtered.gff > temp && mv temp Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.comparison.filtered.gff
 
 ###
-awk -F'\t' 'substr($2,6) == substr($6,6) {print $2}' Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.comparison.filtered.gff >Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.IDs.list.txt
+awk -F'\t' 'substr($2,6) == substr($6,11) {print $2}' Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.comparison.filtered.gff >Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.IDs.list.txt
 
 uniq Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.IDs.list.txt >Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.list.txt
 
