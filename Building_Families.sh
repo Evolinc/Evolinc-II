@@ -137,7 +137,7 @@ if [ ! -z $known_lincRNAs ]; then
     # Blasting to known lincRNAs 
     #blastn -logfile stderr.out -query Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta -db BLAST_DB/$known_lincRNAs.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.out &&
     minimap2 -t 4 -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta $known_lincRNAs
-    rep -v "SQ" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam | grep -v "@PG" | grep "TBH" | sort -u >  Homology_Search/$subject_species.lincRNA_annotation.list.txt
+    grep -v "SQ" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam | grep -v "@PG" | grep "TBH" | sort -u >  Homology_Search/$subject_species.lincRNA_annotation.list.txt
     # Filtering the output
     #python /filter_lincRNA_sequences_annotation.py Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.out Homology_Search/$subject_species.lincRNA_annotation.list.txt &&
     # Assign the annotation of lincRNA to the known lincRNA
