@@ -51,12 +51,14 @@ if [ "$cleanquery" -ge "$notclean" ]; then
 	echo "Query lincRNA names are messy, attempting to clean them up. Replacing spaces and underscores with periods."
 else 
 	echo "Query lincRNA names look good, proceeding"
+fi
 
 cleanknown=$(grep -c -E '_| ' $known_lincRNAs)
 if [ "$cleanknown" -ge "$notclean" ]; then
 	echo "Known subject lincRNA names are messy, attempting to clean them up. Replacing spaces and underscores with periods."
 else 
 	echo "Known subject lincRNA names look good, proceeding"
+fi
 
 sed -i 's~_~.~g; s~gene=~~g; s~ ~.~g; s~\.\.~\.~g;' $lincRNAfasta
 sed -i 's~_~.~g; s~gene=~~g; s~ ~.~g; s~\.\.~\.~g;' $known_lincRNAs
