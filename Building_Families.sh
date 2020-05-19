@@ -44,24 +44,15 @@ done
 echo "Building_Families.sh script is reporting this"
 echo "Starting! on $subject_species"
 
-###This step is to make sure that query and known lncRNAs do not contain underscores or equal signs The if/else statement is more to announce whether names look good.
+###This step is to make sure that query lncRNAs do not contain underscores or equal signs The if/else statement is more to announce whether names look good.
 notclean=1
 cleanquery=$(grep -c -E '_| ' $lincRNAfasta)
 if [ "$cleanquery" -ge "$notclean" ]; then
 	echo "Query lincRNA names are messy, attempting to clean them up. Replacing spaces and underscores with periods."
+	sed -i 's~_~.~g; s~gene=~~g; s~ ~.~g; s~\.\.~\.~g;' $lincRNAfasta
 else 
 	echo "Query lincRNA names look good, proceeding"
 fi
-
-cleanknown=$(grep -c -E '_| ' $known_lincRNAs)
-if [ "$cleanknown" -ge "$notclean" ]; then
-	echo "Known subject lincRNA names are messy, attempting to clean them up. Replacing spaces and underscores with periods."
-else 
-	echo "Known subject lincRNA names look good, proceeding"
-fi
-
-sed -i 's~_~.~g; s~gene=~~g; s~ ~.~g; s~\.\.~\.~g;' $lincRNAfasta
-sed -i 's~_~.~g; s~gene=~~g; s~ ~.~g; s~\.\.~\.~g;' $known_lincRNAs
 
 ### Check to see if query FASTA file contains only one lincRNA
 count=$(grep -c ">" $lincRNAfasta)
@@ -139,6 +130,13 @@ fi
 # Optional argument - 2 (Known lincRNAs)
 if [ ! -z $known_lincRNAs ]; then 
 	echo "Testing for similarity with" $known_lincRNAs
+	cleanknown=$(grep -c -E '_| ' $known_lincRNAs)
+	if [ "$cleanknown" -ge "$notclean" ]; then
+	echo "Known subject lincRNA names are messy, attempting to clean them up. Replacing spaces and underscores with periods."
+	sed -i 's~_~.~g; s~gene=~~g; s~ ~.~g; s~\.\.~\.~g;' $known_lincRNAs
+	else 
+	echo "Known subject lincRNA names look good, proceeding"
+	fi
     # Comparing to known lincRNAs with Minimap2. Run minimap2 then clean up the file
 	minimap2 -t $threads -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta $known_lincRNAs
 	grep -v "SQ" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam | grep -v "@PG" > Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out
