@@ -45,7 +45,7 @@ while getopts ":hb:q:l:i:s:o:v:n:t:" opt; do
     query_lincRNA=$OPTARG # Query lincRNA file here
      ;;
     q)
-    query_species=$OPTARG # This is entirely left to the user
+    query_species=$OPTARG # This should be the four letter format for the query species - same as used in the BLASTing_list
      ;;
     i)
     input_folder=$OPTARG # Input folder
@@ -87,7 +87,6 @@ START_TIME=$SECONDS
 
 # Make all necessary folders
 mkdir $output
-mkdir BLAST_DB
 mkdir Homology_Search
 mkdir Reciprocal_BLAST
 mkdir Orthologs
@@ -202,7 +201,7 @@ then
   
 ### End of phylogenetic step, the below code is if there is no phylogenetic step picked
 else
-  echo "Generating summary of aligned linRNA"
+  echo "Generating summary of aligned lincRNAs"
   python /Family_division_and_summary.py ../../$sp_list
   grep -v "aligned_list.txt" summary.txt > final_summary.txt
   cp final_summary.txt ../../$output/Instance_count.txt
@@ -273,10 +272,9 @@ fi
 # Moving all the files to the output folder
 cd ../
 mv Homology_Search $output
-mv BLAST_DB $output
 mv Reciprocal_BLAST $output
 mv Orthologs $output
-rm stderr.out sample-instance-report.txt
+rm sample-instance-report.txt
 
 echo "All necessary files written to" $output
 echo "Finished Evolinc-part-II!"
