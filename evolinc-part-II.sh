@@ -145,6 +145,7 @@ ls * > structure_list.txt
 mkdir Structures_from_MSA
 mv structure_list.txt Structures_from_MSA/structure_list.txt
 sed -i '/structure_list.txt/d' Structures_from_MSA/structure_list.txt
+sed -i 's~.fasta~~g' Structures_from_MSA/structure_list.txt
 perl /Batch_mlocarna.pl Structures_from_MSA/structure_list.txt
 mv Structures_from_MSA ../../$output
 echo "Finished with structural alignments, files in Output/Structures_from_MSA folder"
