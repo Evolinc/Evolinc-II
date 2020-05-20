@@ -1,5 +1,5 @@
 #!/usr/bin/Rscript
-
+library(RColorBrewer)
 library(getopt)
 
 args<-commandArgs(TRUE)
@@ -27,6 +27,8 @@ a3 <- paste(a1, a2, sep = ".")
 dataFile <- read.table("final_summary.txt", sep = "\t", header = TRUE)
 
 dataFile$File.Name <- NULL
+
+colcount <- ncol(dataFile)
 
 query_column <- dataFile[ret.opts$query_sp]
 
@@ -64,7 +66,8 @@ string1 = "Percent "
 string2 = " homologous lincRNA loci identified"
 new = paste0(string1, a3, string2) 
 
-bargraph <- barplot(plot1, col = "blue",
+colors <- brewer.pal(colcount, "Set2")
+bargraph <- barplot(plot1, col = colors,
                     ylab = new, ylim = c(0, max(plot1)*1.15),
                     font = 3, yaxt = "n"
                    ,las = 2)
