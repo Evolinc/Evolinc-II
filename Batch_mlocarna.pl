@@ -19,6 +19,6 @@ close AFILE;
 for (my $i=0; $i<@list; $i++) {
         my $file = $list[$i];
         system("echo 'Running mlocarna on $file'");
-        system("mlocarna --probabilistic --threads=60 -q $file");
+        system("mlocarna --threads=24 -q $file.fasta");
         system("mv $file.out Structures_from_MSA/$file.out");
 }
