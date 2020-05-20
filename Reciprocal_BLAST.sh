@@ -94,7 +94,7 @@ subject_species=${Put_ortholog:0:4}
 Rscript /bed_to_gff.R Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.bed Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal_exon.out.gff $subject_species
 sed -i 's~sequence_feature~exon~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal_exon.out.gff
 grep -v "#" Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal_exon.out.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.gff
-sed -i 's~name=~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.gff && awk '{print $9 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" "gene_id " $2 "_" $9 "; " "transcript_id " $2 "_" $9 ";" "\t" "500"}' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.gff
+sed -i 's~name=~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.gff && awk '{print $9 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" "gene_id " $9 "; " "transcript_id " $9 ";" "\t" "500"}' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.gff
 
 
 # Pick the top hit and merge close hits
