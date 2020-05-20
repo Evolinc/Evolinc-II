@@ -20,5 +20,7 @@ for (my $i=0; $i<@list; $i++) {
         my $file = $list[$i];
         system("echo 'Running mlocarna on $file'");
         system("mlocarna --threads=24 -q $file.fasta");
+        system("ps2pdf $file.out/results/alirna.ps $file.out/results/alirna.pdf");
+        system("ps2pdf $file.out/results/aln.ps $file.out/results/aln.pdf");
         system("mv $file.out Structures_from_MSA/$file.out");
 }
