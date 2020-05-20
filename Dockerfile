@@ -57,8 +57,21 @@ RUN make -f Makefile.SSE3.PTHREADS.gcc
 RUN cp raxmlHPC-PTHREADS-SSE3 /usr/bin/
 WORKDIR /
 
-# NCBI
-# RUN wget -O- ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.6.0/ncbi-blast-2.6.0+-x64-linux.tar.gz | tar zxvf -
+#ViennaRNA package for RNA structure prediction
+RUN wget https://www.tbi.univie.ac.at/RNA/download/sourcecode/2_4_x/ViennaRNA-2.4.14.tar.gz
+RUN tar -zxvf ViennaRNA-2.4.14.tar.gz
+RUN cd ViennaRNA-2.4.14 \
+	&& ./configure \
+	&& make \
+	&& make install
+
+#locarna for RNA structure prediction
+RUN wget https://github.com/s-will/LocARNA/releases/download/v1.9.2.1/locarna-1.9.2.1.tar.gz
+RUN tar -zxvf locarna-1.9.2.1.tar.gz
+RUN cd locarna-1.9.2.1 \
+	&& ./configure \
+	&& make \
+	&& make install
 
 #minimap2
 RUN wget https://github.com/lh3/minimap2/releases/download/v2.17/minimap2-2.17_x64-linux.tar.bz2
