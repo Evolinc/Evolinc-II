@@ -139,6 +139,16 @@ cd lincRNA_families
 for i in *FASTA; do mv $i "`basename $i _.FASTA`.fasta"; done
 echo "Finished Creating Families of similar sequences"
 
+#Structure prediction
+echo "Creating structural alignments"
+ls * > structure_list.txt
+mkdir Structures_from_MSA
+mv structure_list.txt Structures_from_MSA/structure_list.txt
+sed -i '/structure_list.txt/d' Structures_from_MSA/structure_list.txt
+perl /Batch_mlocarna.pl Structures_from_MSA/structure_list.txt
+mv Structures_from_MSA ../../$output
+echo "Finished with structural alignments, files in Output/Structures_from_MSA folder"
+
 ### Starting Phylogenetic steps ###
 if [ ! -z $species_tree ];
 then
