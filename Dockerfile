@@ -20,7 +20,8 @@ RUN apt-get update && apt-get install -y g++ \
 		perl \
 		bioperl \
 		gnupg2 \
-        	openjdk-8-jdk
+        	openjdk-8-jdk \
+		ghostscript
 	
 # Bedtools
 RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz
