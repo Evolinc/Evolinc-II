@@ -19,6 +19,9 @@ close AFILE;
 for (my $i=0; $i<@list; $i++) {
         my $file = $list[$i];
         system("echo 'Running mlocarna on $file'");
+        system("perl /singleline.pl $file.fasta >$file.sl.fasta");
+        system("grep -A 1 'TBH' $file.sl.fasta >$file.fasta");
+        system("rm $file.sl.fasta");
         system("mlocarna --threads=24 -q $file.fasta");
         system("ps2pdf $file.out/results/alirna.ps $file.out/results/alirna.pdf");
         system("ps2pdf $file.out/results/aln.ps $file.out/results/aln.pdf");
