@@ -217,10 +217,12 @@ else
   python /Family_division_and_summary.py ../../$sp_list
   grep -v "aligned_list.txt" summary.txt > final_summary.txt
   cp final_summary.txt ../../$output/Instance_count.txt
-  Rscript /final_summary.R -s ../../$sp_list -q $query_species
+  Rscript /final_summary_png.R -s ../../$sp_list -q $query_species
+  Rscript /final_summary_pdf.R -s ../../$sp_list -q $query_species
   cp -r */*.fasta .
   rm summary.txt
   mv lincRNA_barplot.png ../../$output
+  mv lincRNA_barplot.pdf ../../$output
   cd ../
   Rscript /final_summary_table_gen.R -s ../$sp_list -q $query_species
 
