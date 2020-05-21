@@ -76,3 +76,21 @@ axis(2)
                     
 text(bargraph, plot1, labels=res2, pos=3, cex=.8)
 dev.off()
+
+pdf(filename="lincRNA_barplot.pdf",width=6,height=4,res=600)
+
+string1 = "Percent "
+string2 = " homologous lincRNA loci identified"
+new = paste0(string1, a3, string2) 
+
+colors <- brewer.pal(colcount, "Set2")
+bargraph <- barplot(plot1, col = colors,
+                    ylab = new, ylim = c(0, max(plot1)*1.15),
+                    font = 3, yaxt = "n"
+                   ,las = 2)
+
+axis(2)
+                    
+text(bargraph, plot1, labels=res2, pos=3, cex=.8)
+dev.off()
+
