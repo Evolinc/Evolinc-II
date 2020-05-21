@@ -58,6 +58,22 @@ plot1 <- round(((plot/max(plot))*100))
 
 res2 = paste(plot1, res1, sep = " ")
 
+pdf(filename="lincRNA_barplot.pdf", width=6, height=4, res=600)
+
+string1 = "Percent "
+string2 = " homologous lincRNA loci identified"
+new = paste0(string1, a3, string2) 
+
+bargraph <- barplot(plot1, col = "blue",
+                    ylab = new, ylim = c(0, max(plot1)*1.15),
+                    font = 3, yaxt = "n"
+                   ,las = 2)
+
+axis(2)
+                    
+text(bargraph, plot1, labels=res2, pos=3, cex=.8)
+dev.off()
+
 png(filename="lincRNA_barplot.png",width=min(3600,1800+800*ncol(plot)/10),height=1800,res=300)
 
 string1 = "Percent "
