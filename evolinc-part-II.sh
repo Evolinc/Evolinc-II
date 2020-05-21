@@ -190,7 +190,10 @@ if [ ! -z $species_tree ];
   mv aligned_list.txt ../RAxML_families
   cd ../RAxML_families
   mkdir Reconciled_trees
+  reduc=$(ls ../Final_results/*.reduced | wc -l )
+  if [ $reduc -gt 0 ]; then
   mv ../Final_results/*.reduced Reconciled_trees
+  fi
   perl /Batch_NOTUNG.pl aligned_list.txt ../../../$species_tree
   mv *png Reconciled_trees
   mv Reconciled_trees  ../../../$output
