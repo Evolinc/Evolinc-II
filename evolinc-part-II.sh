@@ -210,6 +210,7 @@ else
   cp -r */*.fasta .
   rm summary.txt
   mv lincRNA_barplot.png ../../$output
+  mv lincRNA_barplot.pdf ../../$output
   cd ../
   Rscript /final_summary_table_gen.R -s ../$sp_list -q $query_species
 
