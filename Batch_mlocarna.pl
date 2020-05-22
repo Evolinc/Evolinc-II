@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 my $listFile = $ARGV[0];
+my $threads = $ARGV[1];
 my @list;
 
 open (AFILE, $listFile) or die "cannot open $listFile\n";
@@ -22,7 +23,7 @@ for (my $i=0; $i<@list; $i++) {
         system("perl /singleline.pl $file.fasta >$file.sl.fasta");
         system("grep -A 1 'TBH' $file.sl.fasta >$file.fasta");
         system("rm $file.sl.fasta");
-        system("mlocarna --threads=24 -q $file.fasta");
+        system("mlocarna --threads=$threads -q $file.fasta");
         system("ps2pdf $file.out/results/alirna.ps $file.out/results/alirna.pdf");
         system("ps2pdf $file.out/results/aln.ps $file.out/results/aln.pdf");
         system("mv $file.out Structures_from_MSA/$file.out");
