@@ -58,7 +58,7 @@ plot1 <- round(((plot/max(plot))*100))
 
 res2 = paste(plot1, res1, sep = " ")
 
-pdf(filename="lincRNA_barplot.pdf", width=6, height=4, res=600)
+pdf(filename="lincRNA_barplot.pdf", width=6, height=4)
 
 string1 = "Percent "
 string2 = " homologous lincRNA loci identified"
