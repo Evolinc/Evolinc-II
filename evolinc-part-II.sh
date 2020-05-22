@@ -148,7 +148,7 @@ if [ ! -z $species_tree ];
 	mv structure_list.txt Structures_from_MSA/structure_list.txt
 	sed -i '/structure_list.txt/d' Structures_from_MSA/structure_list.txt
 	sed -i 's~.fasta~~g' Structures_from_MSA/structure_list.txt
-	perl /Batch_mlocarna.pl Structures_from_MSA/structure_list.txt
+	perl /Batch_mlocarna.pl Structures_from_MSA/structure_list.txt $threads
 	mv Structures_from_MSA ../../$output
 	echo "Finished with structural alignments, files in Output/Structures_from_MSA folder"
 # Starting alignments
@@ -156,7 +156,7 @@ if [ ! -z $species_tree ];
 	ls * > alignment_list.txt
 	sed -i '/alignment_list.txt/d' alignment_list.txt
 	mkdir -p Final_results
-	perl /Batch_MAFFT.pl alignment_list.txt
+	perl /Batch_MAFFT.pl alignment_list.txt $threads
 	echo "Finished with alignments, preparing files for RAxML if that option was selected"
 	cd Final_results
   #If the number of fasta files in the current folder is equal to one proceed
@@ -186,7 +186,7 @@ if [ ! -z $species_tree ];
   #RAxML step
   echo "starting tree building"
   mkdir -p ../RAxML_families 
-  perl /Batch_RAxML.pl aligned_list.txt
+  perl /Batch_RAxML.pl aligned_list.txt $threads
   mv aligned_list.txt ../RAxML_families
   cd ../RAxML_families
   mkdir Reconciled_trees
