@@ -236,10 +236,11 @@ then
         for i in ../Homology_Search/*tested.out; do
                 if [[ -s $i ]] ; then
                    python /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
-		   if [[ -s $i.mod ]] ; then
-                   sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
-                   python /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
-		   fi
+		   linenum=$(wc -l $i.mod)
+  			if [ $linenum -gt 1 ]; then
+				sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
+                  	 	python /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
+		   	fi
                 fi
         done
         for i in ../Homology_Search/*mod.annotation.*sense.gff; do
@@ -257,10 +258,11 @@ then
         for i in ../Homology_Search/*tested.out; do
                 if [[ -s $i ]] ; then
                    python /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
-		   if [[ -s $i.mod ]] ; then
-                   sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
-                   python /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
-		   fi
+		   linenum=$(wc -l $i.mod)
+  			if [ $linenum -gt 1 ]; then
+                   	sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
+                   	python /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
+		   	fi
                 fi
         done    
         Rscript /final_summary_table_all.R       
