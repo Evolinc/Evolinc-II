@@ -144,6 +144,7 @@ if [ ! -z $known_lincRNAs ]; then
 	
 	# If list file is empty, remove sam.tested.out file so that it doesn't cause problems towards the end of the evolinc-ii.sh
 	if [[ -s Homology_Search/$subject_species.lincRNA_annotation.list.txt ]]; then
+	echo "No overlap with known lincRNAs"
         rm Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out
         fi
 	
