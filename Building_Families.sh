@@ -143,8 +143,10 @@ if [ ! -z $known_lincRNAs ]; then
 	grep "TBH" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out | sort -u >  Homology_Search/$subject_species.lincRNA_annotation.list.txt
 	
 	# If list file is empty, remove sam.tested.out file so that it doesn't cause problems towards the end of the evolinc-ii.sh
-	if [[ -s Homology_Search/$subject_species.lincRNA_annotation.list.txt ]]; then
-	echo "No overlap with known lincRNAs"
+	if [ -s Homology_Search/$subject_species.lincRNA_annotation.list.txt ]; then
+	echo "Overlap found with known lincRNAs"
+	else
+	echo "no overlap found with known lincRNAs"
         rm Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out
         fi
 	
