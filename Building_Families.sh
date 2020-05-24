@@ -141,7 +141,13 @@ if [ ! -z $known_lincRNAs ]; then
 	minimap2 -t $threads -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta $known_lincRNAs
 	grep -v "SQ" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam | grep -v "@PG" > Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out
 	grep "TBH" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out | sort -u >  Homology_Search/$subject_species.lincRNA_annotation.list.txt
-    # Assign the annotation of lincRNA to the known lincRNA
+	
+	# If list file is empty, remove sam.tested.out file so that it doesn't cause problems towards the end of the evolinc-ii.sh
+	if [[ -s Homology_Search/$subject_species.lincRNA_annotation.list.txt ]] ; then
+        rm Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out
+        fi
+	
+	# Assign the annotation of lincRNA to the known lincRNA
 	python /assign_annotation_lincRNA.py Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta Homology_Search/$subject_species.lincRNA_annotation.list.txt Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.renamed.fasta
 else
 	mv Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.renamed.fasta
