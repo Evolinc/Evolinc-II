@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #Author: Andrew Nelson; andrew.d.l.nelson@gmail.com
 #Usage: perl <Batch_MAFFT.pl> <listfile>
-#Script to align sequences in batch mode
+#Script to align sequences in batch mode.
 use strict;
 use warnings;
 
