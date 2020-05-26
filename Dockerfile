@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y g++ \
 		bioperl \
 		gnupg2 \
         	openjdk-8-jdk \
-		ghostscript
+		ghostscript && pip install biopython
 	
 # Bedtools
 RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz
@@ -34,9 +34,6 @@ RUN wget -O- http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cuffl
 
 # Mafft
 RUN apt-get install -y mafft
-
-# Biopython
-RUN pip install biopython
 
 # R libraries
 RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" >> /etc/apt/sources.list
