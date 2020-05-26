@@ -7,8 +7,8 @@ outfile = sys.argv[2] # output file for filtered SAM output
 
 final = list()
 with open(infile, 'rU' ) as fh_in:
-    for line in fh_in:
-        line = line.strip().split()
+	for line in fh_in:
+		line = line.strip().split()
 	ID = "%s\t%s" % (line[2], line[0])
 	empty = "*"
 	test = line[2]
@@ -18,6 +18,6 @@ with open(infile, 'rU' ) as fh_in:
 		final.append(ID)
 
 with open(outfile, "w") as fh_out:
-    final3 = "\n".join(list(final))
-    fh_out.write(final3)
-    fh_out.write("\n")
+	final3 = "\n".join(list(final))
+	fh_out.write(final3)
+	fh_out.write("\n")
