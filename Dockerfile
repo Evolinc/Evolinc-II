@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y g++ \
 		libcurl4-openssl-dev \
 		libssl-dev \
 		libxml2-dev \
-		python \
+		python3 \
+		python3-pip \
 		perl \
 		wget \
 		curl \
@@ -21,8 +22,10 @@ RUN apt-get update && apt-get install -y g++ \
 		bioperl \
 		gnupg2 \
         	openjdk-8-jdk \
-		ghostscript && pip3 install biopython
-	
+		ghostscript
+
+# BioPython
+RUN pip3 install biopython
 # Bedtools
 RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.26.0/bedtools-2.26.0.tar.gz
 RUN tar zxvf bedtools-2.26.0.tar.gz
