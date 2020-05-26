@@ -36,8 +36,6 @@ RUN wget -O- http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cuffl
 RUN apt-get install -y mafft
 
 # Biopython
-RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-RUN python get-pip.py
 RUN pip install biopython
 
 # R libraries
