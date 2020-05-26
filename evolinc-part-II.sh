@@ -96,7 +96,7 @@ grep ">" $query_lincRNA | sed 's/>//' > Orthologs/lincRNA.list
 
 # Initiate search for putative orthologs
 echo "***Starting lincRNA to Genome Comparisons***"
-python /startup_script.py -b $Blasting_list -i $input_folder -v $value -n $threads
+python3 /startup_script.py -b $Blasting_list -i $input_folder -v $value -n $threads
 echo "***Finished with lincRNA to Genome Comparisons***"
 
 #Create a list of all genomes, lincRNA ortholog, and gff files to set up reciprocal BLAST
@@ -122,7 +122,7 @@ rm Reciprocal_lincRNAs_coord_list.txt
 
 # Confirm the reciprocity of the putative orthologs
 echo "***Starting Reciprocal Search***"
-python /Reciprocal_BLAST_startup_script.py -b Reciprocal_list.txt -v $value -n $threads
+python3 /Reciprocal_BLAST_startup_script.py -b Reciprocal_list.txt -v $value -n $threads
 echo "***Finished with Reciprocal Search***"
 
 #Create a CoGe viewable bed file of TBH
@@ -201,7 +201,7 @@ if [ ! -z $species_tree ];
 
   # Generating summary of aligned lincRNA
   echo "Generating summary of aligned linRNA"
-  python /Family_division_and_summary.py ../../../$sp_list
+  python3 /Family_division_and_summary.py ../../../$sp_list
   grep -v "aligned_list.txt" summary.txt > final_summary.txt
   Rscript /upset_plot_pdf.R 
   mv Per_species_identification_plot.pdf ../../../$output/Per_species_identification_plot.pdf
@@ -219,7 +219,7 @@ if [ ! -z $species_tree ];
 ### End of phylogenetic step, the below code is if there is no phylogenetic step picked
 else
   echo "Generating summary of aligned lincRNAs"
-  python /Family_division_and_summary.py ../../$sp_list
+  python3 /Family_division_and_summary.py ../../$sp_list
   grep -v "aligned_list.txt" summary.txt > final_summary.txt
   Rscript /upset_plot_pdf.R 
   mv Per_species_identification_plot.pdf ../../$output/Per_species_identification_plot.pdf
@@ -243,9 +243,9 @@ if compgen -G "../Homology_Search/*tested.out" > /dev/null && compgen -G "../Hom
 then
         for i in ../Homology_Search/*tested.out; do
                 if [[ -s $i ]]; then
-                   python /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
+                   python3 /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
 				sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
-                  	 	python /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
+                  	 	python3 /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
                 fi
         done
         for i in ../Homology_Search/*mod.annotation.*sense.gff; do
@@ -262,9 +262,9 @@ elif compgen -G "../Homology_Search/*tested.out" > /dev/null && ! compgen -G  ".
 then
         for i in ../Homology_Search/*tested.out; do
                 if [[ -s $i ]]; then
-                   python /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
+                   python3 /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
                    	sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
-                   	python /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
+                   	python3 /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
                 fi
         done    
         Rscript /final_summary_table_all.R       
