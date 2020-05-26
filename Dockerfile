@@ -87,6 +87,7 @@ RUN cd samtools-1.10 \
 
 # Setting paths to all the softwares
 ENV BINPATH /usr/bin
+ENV PATH /usr/local/lib/:$PATH
 ENV PATH /minimap2-2.17_x64-linux/:$PATH
 ENV PATH /bedtools2/bin/:$PATH
 ENV PATH /cufflinks-2.2.1.Linux_x86_64/:$PATH
