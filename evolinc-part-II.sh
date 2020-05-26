@@ -203,6 +203,10 @@ if [ ! -z $species_tree ];
   echo "Generating summary of aligned linRNA"
   python /Family_division_and_summary.py ../../../$sp_list
   grep -v "aligned_list.txt" summary.txt > final_summary.txt
+  Rscript /upset_plot_pdf.R 
+  mv Per_species_identification_plot.pdf ../../../$output/Per_species_identification_plot.pdf
+  Rscript /upset_plot_png.R
+  mv Per_species_identification_plot.png ../../../$output/Per_species_identification_plot.png
   Rscript /final_summary_png.R -s ../../../$sp_list -q $query_species
   Rscript /final_summary_pdf.R -s ../../../$sp_list -q $query_species
   rm summary.txt
@@ -217,6 +221,10 @@ else
   echo "Generating summary of aligned lincRNAs"
   python /Family_division_and_summary.py ../../$sp_list
   grep -v "aligned_list.txt" summary.txt > final_summary.txt
+  Rscript /upset_plot_pdf.R 
+  mv Per_species_identification_plot.pdf ../../$output/Per_species_identification_plot.pdf
+  Rscript /upset_plot_png.R
+  mv Per_species_identification_plot.png ../../$output/Per_species_identification_plot.png
   cp final_summary.txt ../../$output/Instance_count.txt
   Rscript /final_summary_png.R -s ../../$sp_list -q $query_species
   Rscript /final_summary_pdf.R -s ../../$sp_list -q $query_species
