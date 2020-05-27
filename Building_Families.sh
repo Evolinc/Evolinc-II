@@ -140,7 +140,7 @@ if [ ! -z $known_lincRNAs ]; then
     # Comparing to known lincRNAs with Minimap2. Run minimap2 then clean up the file
 	minimap2 -t $threads -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam Homology_Search/$subject_species.$query_species.orthologs.renamed.fasta $known_lincRNAs
 	grep -v "SQ" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam | grep -v "@PG" > Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out
-	grep "TBH" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out | sort -u >  Homology_Search/$subject_species.lincRNA_annotation.list.txt
+	grep "TBH" Homology_Search/$subject_species.$query_species.orthologs.renamed.lincRNAs_tested.sam.tested.out | cut -f 3 | sort -u >  Homology_Search/$subject_species.lincRNA_annotation.list.txt
 	
 	# If list file is empty, remove sam.tested.out file so that it doesn't cause problems towards the end of the evolinc-ii.sh
 	if [ -s Homology_Search/$subject_species.lincRNA_annotation.list.txt ]; then
