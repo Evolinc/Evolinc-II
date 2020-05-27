@@ -9,13 +9,13 @@ final = list()
 with open(infile, 'rU' ) as fh_in:
 	for line in fh_in:
 		line = line.strip().split()
-	ID = "%s\t%s" % (line[2], line[0])
-	empty = "*"
-	test = line[2]
-	if test == empty:
-		pass
-	else:
-		final.append(ID)
+		ID = "%s\t%s" % (line[2], line[0])
+		empty = "*"
+		test = line[2]
+		if test == empty:
+			pass
+		else:
+			final.append(ID)
 
 with open(outfile, "w") as fh_out:
 	final3 = "\n".join(list(final))
