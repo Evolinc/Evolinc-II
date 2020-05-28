@@ -7,7 +7,7 @@
 # EVOLINC-II 1.2
 Evolinc-II pipeline is designed to perform a series of comparative genomic and transcriptomic analyses across an evolutionary timescale of the user’s choosing and on any number (1-1000s) of query lincRNAs. 
 
-Evolinc-II minimally requires the following input data
+Evolinc-II minimally requires the following input data:
 
 1. A FASTA file of lincRNA sequences of all genomes to be interrogated.
 2. A single column text file with all species listed in order of phylogenetic relatedness to the query species. See Discussion_on_species_list.txt for more info.
