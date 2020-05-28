@@ -45,7 +45,7 @@ while getopts ":hb:q:l:i:s:o:v:n:t:" opt; do
     query_lincRNA=$OPTARG # Query lincRNA file here
      ;;
     q)
-    query_species=$OPTARG # This is entirely left to the user
+    query_species=$OPTARG # This should be the four letter format for the query species - same as used in the BLASTing_list
      ;;
     i)
     input_folder=$OPTARG # Input folder
@@ -87,7 +87,6 @@ START_TIME=$SECONDS
 
 # Make all necessary folders
 mkdir $output
-mkdir BLAST_DB
 mkdir Homology_Search
 mkdir Reciprocal_BLAST
 mkdir Orthologs
@@ -97,7 +96,7 @@ grep ">" $query_lincRNA | sed 's/>//' > Orthologs/lincRNA.list
 
 # Initiate search for putative orthologs
 echo "***Starting lincRNA to Genome Comparisons***"
-python /startup_script.py -b $Blasting_list -i $input_folder -v $value -n $threads
+python3 /startup_script.py -b $Blasting_list -i $input_folder -v $value -n $threads
 echo "***Finished with lincRNA to Genome Comparisons***"
 
 #Create a list of all genomes, lincRNA ortholog, and gff files to set up reciprocal BLAST
@@ -123,7 +122,7 @@ rm Reciprocal_lincRNAs_coord_list.txt
 
 # Confirm the reciprocity of the putative orthologs
 echo "***Starting Reciprocal Search***"
-python /Reciprocal_BLAST_startup_script.py -b Reciprocal_list.txt -v $value -n $threads
+python3 /Reciprocal_BLAST_startup_script.py -b Reciprocal_list.txt -v $value -n $threads
 echo "***Finished with Reciprocal Search***"
 
 #Create a CoGe viewable bed file of TBH
@@ -140,18 +139,26 @@ cd lincRNA_families
 for i in *FASTA; do mv $i "`basename $i _.FASTA`.fasta"; done
 echo "Finished Creating Families of similar sequences"
 
-### Starting Phylogenetic steps ###
+### Starting Structural and Phylogenetic steps ###
 if [ ! -z $species_tree ];
-then
-
-  # Starting alignments
-  echo "Starting alignments"
-  ls * > alignment_list.txt
-  sed -i '/alignment_list.txt/d' alignment_list.txt
-  mkdir -p Final_results
-  perl /Batch_MAFFT.pl alignment_list.txt
-  echo "Finished with alignments, preparing files for RAxML if that option was selected"
-  cd Final_results
+	then
+	echo "Creating structural alignments"
+	ls * > structure_list.txt
+	mkdir Structures_from_MSA
+	mv structure_list.txt Structures_from_MSA/structure_list.txt
+	sed -i '/structure_list.txt/d' Structures_from_MSA/structure_list.txt
+	sed -i 's~.fasta~~g' Structures_from_MSA/structure_list.txt
+	perl /Batch_mlocarna.pl Structures_from_MSA/structure_list.txt $threads
+	mv Structures_from_MSA ../../$output
+	echo "Finished with structural alignments, files in Output/Structures_from_MSA folder"
+# Starting alignments
+	echo "Starting sequence alignments for RAxML"
+	ls * > alignment_list.txt
+	sed -i '/alignment_list.txt/d' alignment_list.txt
+	mkdir -p Final_results
+	perl /Batch_MAFFT.pl alignment_list.txt $threads
+	echo "Finished with alignments, preparing files for RAxML if that option was selected"
+	cd Final_results
   #If the number of fasta files in the current folder is equal to one proceed
   filenum=$(ls *.fasta | wc -l )
   if [ $filenum -lt 2 ]; then
@@ -179,11 +186,14 @@ then
   #RAxML step
   echo "starting tree building"
   mkdir -p ../RAxML_families 
-  perl /Batch_RAxML.pl aligned_list.txt
+  perl /Batch_RAxML.pl aligned_list.txt $threads
   mv aligned_list.txt ../RAxML_families
   cd ../RAxML_families
   mkdir Reconciled_trees
+  reduc=$(ls ../Final_results/*.reduced | wc -l )
+  if [ $reduc -gt 0 ]; then
   mv ../Final_results/*.reduced Reconciled_trees
+  fi
   perl /Batch_NOTUNG.pl aligned_list.txt ../../../$species_tree
   mv *png Reconciled_trees
   mv Reconciled_trees  ../../../$output
@@ -191,22 +201,33 @@ then
 
   # Generating summary of aligned lincRNA
   echo "Generating summary of aligned linRNA"
-  python /Family_division_and_summary.py ../../../$sp_list
+  python3 /Family_division_and_summary.py ../../../$sp_list
   grep -v "aligned_list.txt" summary.txt > final_summary.txt
-  Rscript /final_summary.R -s ../../../$sp_list -q $query_species
+  Rscript /upset_plot_pdf.R 
+  mv Per_species_identification_plot.pdf ../../../$output/Per_species_identification_plot.pdf
+  Rscript /upset_plot_png.R
+  mv Per_species_identification_plot.png ../../../$output/Per_species_identification_plot.png
+  Rscript /final_summary_png.R -s ../../../$sp_list -q $query_species
+  Rscript /final_summary_pdf.R -s ../../../$sp_list -q $query_species
   rm summary.txt
   mv lincRNA_barplot.png ../../../$output
+  mv lincRNA_barplot.pdf ../../../$output
   cd ../../
   Rscript /final_summary_table_gen.R -s ../$sp_list -q $query_species
   echo "Finished summary"
   
 ### End of phylogenetic step, the below code is if there is no phylogenetic step picked
 else
-  echo "Generating summary of aligned linRNA"
-  python /Family_division_and_summary.py ../../$sp_list
+  echo "Generating summary of aligned lincRNAs"
+  python3 /Family_division_and_summary.py ../../$sp_list
   grep -v "aligned_list.txt" summary.txt > final_summary.txt
+  Rscript /upset_plot_pdf.R 
+  mv Per_species_identification_plot.pdf ../../$output/Per_species_identification_plot.pdf
+  Rscript /upset_plot_png.R
+  mv Per_species_identification_plot.png ../../$output/Per_species_identification_plot.png
   cp final_summary.txt ../../$output/Instance_count.txt
-  Rscript /final_summary.R -s ../../$sp_list -q $query_species
+  Rscript /final_summary_png.R -s ../../$sp_list -q $query_species
+  Rscript /final_summary_pdf.R -s ../../$sp_list -q $query_species
   cp -r */*.fasta .
   rm summary.txt
   mv lincRNA_barplot.png ../../$output
@@ -221,14 +242,14 @@ fi
 if compgen -G "../Homology_Search/*tested.out" > /dev/null && compgen -G "../Homology_Search/*mod.annotation.*sense.gff" > /dev/null;
 then
         for i in ../Homology_Search/*tested.out; do
-                if [[ -s $i ]] ; then
-                   python /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
-                   sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
-                   python /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
+                if [[ -s $i ]]; then
+                   python3 /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
+				sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
+                  	 	python3 /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
                 fi
         done
         for i in ../Homology_Search/*mod.annotation.*sense.gff; do
-                if [[ -s $i ]] ; then
+                if [[ -s $i ]]; then
                    sed 's/_TBH_1//g' "$i" > temp && mv temp "$i"
                 fi
         done
@@ -240,10 +261,10 @@ then
 elif compgen -G "../Homology_Search/*tested.out" > /dev/null && ! compgen -G  "../Homology_Search/*mod.annotation.*sense.gff" > /dev/null
 then
         for i in ../Homology_Search/*tested.out; do
-                if [[ -s $i ]] ; then
-                   python /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
-                   sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
-                   python /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
+                if [[ -s $i ]]; then
+                   python3 /filter_lincRNA_sequences_annotation2.py "$i" "$i".mod
+                   	sed 's/_TBH_1//g' "$i".mod > temp && mv temp "$i".mod
+                   	python3 /filter_lincRNA_sequences_annotation3.py "$i".mod final_summary_table.csv "$i".mod.sp.csv
                 fi
         done    
         Rscript /final_summary_table_all.R       
@@ -255,7 +276,7 @@ then
 elif ! compgen -G "../Homology_Search/*tested.out" > /dev/null && compgen -G  "../Homology_Search/*mod.annotation.*sense.gff" > /dev/null
 then  
         for i in ../Homology_Search/*mod.annotation.*sense.gff; do
-                if [[ -s $i ]] ; then
+                if [[ -s $i ]]; then
                    sed 's/_TBH_1//g' "$i" > temp && mv temp "$i"
                 fi
         done     
@@ -274,10 +295,9 @@ fi
 # Moving all the files to the output folder
 cd ../
 mv Homology_Search $output
-mv BLAST_DB $output
 mv Reciprocal_BLAST $output
 mv Orthologs $output
-rm stderr.out sample-instance-report.txt
+rm sample-instance-report.txt
 
 echo "All necessary files written to" $output
 echo "Finished Evolinc-part-II!"

@@ -1,11 +1,12 @@
 #!/usr/bin/perl
 #Author: Andrew Nelson; andrew.d.l.nelson@gmail.com
 #Usage: perl <Batch_MAFFT.pl> <listfile>
-#Script to align sequences in batch mode
+#Script to align sequences in batch mode.
 use strict;
 use warnings;
 
 my $listFile = $ARGV[0];
+my $threads = $ARGV[1];
 my @list;
 
 open (AFILE, $listFile) or die "cannot open $listFile\n";
@@ -24,7 +25,7 @@ for (my $i=0; $i<@list; $i++) {
 			system("cp $file Final_results/")
 		}
 		else {
-        system("mafft --globalpair --maxiterate 1000 --quiet $file > Aligned_$file");
+        system("mafft --globalpair --thread $threads --maxiterate 1000 --quiet $file > Aligned_$file");
 		system("mv Aligned_$file Final_results/");
 		}
 }

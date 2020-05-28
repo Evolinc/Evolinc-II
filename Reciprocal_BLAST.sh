@@ -77,30 +77,26 @@ echo "Starting on $Put_ortholog"
 mkdir -p Reciprocal_BLAST_DB
 mkdir -p Reciprocal_BLAST_Return
 
-#Test to see if the genome DB already exists. If not, create one.
-#Assign one of the database files within the Reciprocal_BLAST_DB/ to a variable by searching for a file containing query gen
-DB=$(ls Reciprocal_BLAST_DB/ | grep -m 1 "$query_genome")
-if [[ ! -a $DB ]]; then
-    makeblastdb -logfile stderr.out -in $query_genome -dbtype nucl -out Reciprocal_BLAST_DB/$query_genome.blast.out
+###Switching over to minimap for the reciprocal search
+minimap2 -t $threads -a -w5 --splice -G5k -A2 -B8 -O12,32 -E1,0 -L -o Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.sam $query_genome $Put_ortholog
 
-else
-    # If a genome DB did exist, Blasting the putative ortholog sequences against the query genome genome to find out the location on the genome.
-    blastn -logfile stderr.out -query $Put_ortholog -db Reciprocal_BLAST_DB/$query_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out
+#convert the alignment to bed format, sorted so that the higher quality alignment is first for each query
+samtools sort -@ $threads Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.sam -o Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.sorted.sam
+samtools view -@ $threads -S -b Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.sorted.sam -o Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.sorted.bam 
+bamToBed -i Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.sorted.bam > Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.sorted.bed 
+sort -b -k 4,4 -k 5nr,5 Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.sorted.bed >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.bed
+sed -i 's~_TBH_1~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.bed
 
-fi
-# If a genome DB did not exist, Blasting the putative ortholog sequences against the query genome genome to find out the location on the genome.
-blastn -logfile stderr.out -query $Put_ortholog -db Reciprocal_BLAST_DB/$query_genome.blast.out -num_threads $threads -penalty -2 -reward 1 -gapopen 5 -gapextend 2 -dust no -word_size 8 -evalue $value -outfmt "6 qseqid sseqid pident length qlen qstart qend sstart send evalue bitscore" -out Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out
-
-# Remove spaces in the blastout files
-sed 's/ //g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out > Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out
-#Remove previous TBH formatting prior to merging close hits and picking the top hit
-#sed -i 's~^.....~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out
-sed -i 's~_TBH_1~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out
 #assign subject_species argument
 subject_species=${Put_ortholog:0:4}
 
-# Convert blast result to gff
-perl /blast2gff_recip.pl -i Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out -s $subject_species -o Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.gff
+# Convert minimap2 result to gff
+Rscript /bed_to_gff.R Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.bed Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal_exon.out.gff $subject_species
+sed -i 's~sequence_feature~exon~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal_exon.out.gff
+grep -v "#" Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal_exon.out.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.gff
+sed -i 's~name=~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.gff && awk '{print $9 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" "gene_id " $9 "; " "transcript_id " $9 ";" "\t" "500"}' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.out.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.gff
+
+
 # Pick the top hit and merge close hits
 python /merge_close_hits.py Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.gff Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.merged.gff
 
@@ -128,7 +124,6 @@ uniq Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.IDs.list.txt >Reciprocal_B
 #The line below is being used to generate a list of families (and all their paralogous sequences) to be pulled from the overall FASTA file of sequence homologs in each species.
 sed 's~_TBH_1~~g' Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.list.txt >Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.final.list.for.pooling.families.txt
 
-#sed -i 's~=.*~~g' Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.final.list.for.pooling.families.txt
 sed -i 's~^.....~~g' Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.final.list.for.pooling.families.txt
 sed -i 's~^~>'$subject_species'_~g' Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.final.list.for.pooling.families.txt
 
@@ -147,7 +142,7 @@ sed -i 's~_TBH_.~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fr
 # Move the fragment gff file up one directory so that it doesn't get deleted
 cp Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged_reciprocal_sorted.gff .
 
-find ./Reciprocal_BLAST_Return -type f ! -name '*final*' -delete
+#find ./Reciprocal_BLAST_Return -type f ! -name '*final*' -delete
 python /assign_annotation_ortholog.py ../Orthologs/$Put_ortholog Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.for.renaming.final.txt ../Orthologs/$Put_ortholog.orthologs.identified.fasta
 rm -f ../Orthologs/$Put_ortholog
 perl /singleline.pl ../Orthologs/$Put_ortholog.orthologs.identified.fasta >../Orthologs/$Put_ortholog.orthologs.identified.singleline.fasta
@@ -156,5 +151,5 @@ grep -A 1 -f Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.final.list.for.poo
 #Clean things up a bit
 rm -f ../Orthologs/$Put_ortholog.orthologs.identified.fasta
 rm -f ../Orthologs/$Put_ortholog.orthologs.identified.singleline.fasta
-find ./Reciprocal_BLAST_Return -type f ! -name '*renaming*' -delete
+#find ./Reciprocal_BLAST_Return -type f ! -name '*renaming*' -delete
 echo "Finished with $Put_ortholog"
