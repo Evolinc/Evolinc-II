@@ -88,7 +88,7 @@ grep "TBH" Homology_Search/$subject_species.out.merged.gff >Homology_Search/$sub
 #The below lines grab five of the top non-TBH hits (in case of large, multi-hit families we don't want to grab too many). This is informative for examining duplication events.
 grep -v "TBH" Homology_Search/$subject_species.out.merged.gff >Homology_Search/$subject_species.out.no_TBH_precursor.only.gff
 cut -f 1 Homology_Search/$subject_species.out.no_TBH_precursor.only.gff | grep '._1$\|._2$\|._3$\|._4$\|._5$' | sed 's~$~\t~g' >Homology_Search/$subject_species.out.no_TBH.only.gff.list.txt
-grep -f Homology_Search/$subject_species.out.no_TBH.only.gff.list.txt Homology_Search/$subject_species.out.no_TBH_precursor.only.gff >Homology_Search/$subject_species.out.no_TBH.only.gff
+grep -Ff Homology_Search/$subject_species.out.no_TBH.only.gff.list.txt Homology_Search/$subject_species.out.no_TBH_precursor.only.gff >Homology_Search/$subject_species.out.no_TBH.only.gff
 
 # Convert gtf to fasta
 # Change the file format since the gffread requires the chromosome to be first column
