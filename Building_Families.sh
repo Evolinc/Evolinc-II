@@ -168,7 +168,7 @@ grep ">" $lincRNAfasta > Homology_Search/List_of_all_query_lincRNAs.txt
 grep -vwf Homology_Search/List_of_identified_putative_orthologs.txt Homology_Search/List_of_all_query_lincRNAs.txt > Homology_Search/List_of_non_identified_query_lincRNAs.txt
 sed -i 's~>~~g' Homology_Search/List_of_non_identified_query_lincRNAs.txt
 perl /singleline.pl $lincRNAfasta > Homology_Search/query_lincRNAs_singleline.fasta
-grep -A 1 -f Homology_Search/List_of_non_identified_query_lincRNAs.txt Homology_Search/query_lincRNAs_singleline.fasta | sed 's~--~~g' > Homology_Search/$query_species.$subject_species.non_identified_from_first_round.fasta
+grep -A 1 -Ff Homology_Search/List_of_non_identified_query_lincRNAs.txt Homology_Search/query_lincRNAs_singleline.fasta | sed 's~--~~g' > Homology_Search/$query_species.$subject_species.non_identified_from_first_round.fasta
 
 mv Homology_Search/$subject_species.out.TBH.only.gff Homology_Search/$subject_species.200nt_plus_full_length_searches.gff
 sort -k 1,1 -k 4,4n Homology_Search/$subject_species.200nt_plus_full_length_searches.gff > Homology_Search/$subject_species.200nt_plus_full_length_searches_sorted.gff
