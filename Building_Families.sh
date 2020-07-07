@@ -165,7 +165,7 @@ mv Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.rena
 grep ">" Homology_Search/$subject_species.$query_species.orthologs.lincRNA_tested.renamed.fasta.dup_removed.fasta |sed 's~^......~~g'| sed 's~_Known_lincRNA~~g'| sed 's~_Known_Gene_Sense~~g' | sed 's~_Known_Gene_Antisense~~g' | sed 's~_TBH_1~~g' | sed 's~_.$~~g' | sed 's~_..$~~g' | sed 's~_...$~~g' | sed 's~>~~g' | sort -u > Homology_Search/List_of_identified_putative_orthologs.txt
 grep ">" $lincRNAfasta > Homology_Search/List_of_all_query_lincRNAs.txt
 # Search for lincRNA IDs that have not been found with the previous BLAST search. If none are found, still populate the file with the title "List_of_non_identified_lincRNAs" so the next step doesn't fail.
-grep -vwf Homology_Search/List_of_identified_putative_orthologs.txt Homology_Search/List_of_all_query_lincRNAs.txt > Homology_Search/List_of_non_identified_query_lincRNAs.txt
+grep -vwFf Homology_Search/List_of_identified_putative_orthologs.txt Homology_Search/List_of_all_query_lincRNAs.txt > Homology_Search/List_of_non_identified_query_lincRNAs.txt
 sed -i 's~>~~g' Homology_Search/List_of_non_identified_query_lincRNAs.txt
 perl /singleline.pl $lincRNAfasta > Homology_Search/query_lincRNAs_singleline.fasta
 grep -A 1 -Ff Homology_Search/List_of_non_identified_query_lincRNAs.txt Homology_Search/query_lincRNAs_singleline.fasta | sed 's~--~~g' > Homology_Search/$query_species.$subject_species.non_identified_from_first_round.fasta
