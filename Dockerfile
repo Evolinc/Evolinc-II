@@ -37,7 +37,7 @@ RUN wget -O- http://cole-trapnell-lab.github.io/cufflinks/assets/downloads/cuffl
 RUN apt-get install -y mafft
 
 # R libraries
-RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" >> /etc/apt/sources.list
+RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/" >> /etc/apt/sources.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 RUN apt-get update
 RUN apt-get install -y r-base r-base-dev
