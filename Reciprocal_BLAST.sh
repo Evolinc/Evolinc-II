@@ -129,13 +129,13 @@ sed -i 's~^~>'$subject_species'_~g' Reciprocal_BLAST_Return/$Put_ortholog.recipr
 
 sleep 5
 sed 's~^.....~~g' Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.list.txt > Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.stripped.list.txt
-grep -Ef Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.stripped.list.txt Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.almost.txt >Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.comparison.TBH.filtered.gff
+grep -EFf Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.stripped.list.txt Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.almost.txt >Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.comparison.TBH.filtered.gff
 sort -u Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.comparison.TBH.filtered.gff >Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.for.renaming.final.txt
 
 # Prepare the fragment gff file for output
 awk '{print $2 "\t" $1 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t" $7 "\t" $8 "\t" $9 " " $10  " " $11 " " $12}' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.fragments_not_merged.gff > temp && mv temp Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.fragments_not_merged.gff
 grep "TBH" Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.stripped.out.fragments_not_merged.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged.gff
-grep -Ef Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.for.renaming.final.txt Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged_reciprocal.gff
+grep -EFf Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.for.renaming.final.txt Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged_reciprocal.gff
 bedtools sort -i Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged_reciprocal.gff >Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged_reciprocal_sorted.gff
 # get rid of TBH nomenclature
 sed -i 's~_TBH_.~~g' Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged_reciprocal_sorted.gff
@@ -146,7 +146,7 @@ cp Reciprocal_BLAST_Return/$Put_ortholog.Reciprocal.TBH.out.fragments_not_merged
 python /assign_annotation_ortholog.py ../Orthologs/$Put_ortholog Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.Unique.IDs.for.renaming.final.txt ../Orthologs/$Put_ortholog.orthologs.identified.fasta
 rm -f ../Orthologs/$Put_ortholog
 perl /singleline.pl ../Orthologs/$Put_ortholog.orthologs.identified.fasta >../Orthologs/$Put_ortholog.orthologs.identified.singleline.fasta
-grep -A 1 -f Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.final.list.for.pooling.families.txt ../Orthologs/$Put_ortholog.orthologs.identified.singleline.fasta >../Orthologs/$Put_ortholog.orthologs.only.fasta
+grep -A 1 -Ff Reciprocal_BLAST_Return/$Put_ortholog.reciprocal.final.list.for.pooling.families.txt ../Orthologs/$Put_ortholog.orthologs.identified.singleline.fasta >../Orthologs/$Put_ortholog.orthologs.only.fasta
 
 #Clean things up a bit
 rm -f ../Orthologs/$Put_ortholog.orthologs.identified.fasta
