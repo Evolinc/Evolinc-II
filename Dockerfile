@@ -46,6 +46,7 @@ RUN Rscript -e 'install.packages("UpSetR", dependencies = TRUE, repos="http://cr
 RUN Rscript -e 'install.packages("getopt", dependencies = TRUE, repos="http://cran.rstudio.com/");'
 RUN Rscript -e 'install.packages("reshape2", dependencies = TRUE, repos="http://cran.rstudio.com/");'
 RUN Rscript -e 'install.packages("dplyr", dependencies = TRUE, repos="http://cran.rstudio.com/");'
+RUN Rscript -e 'install.packages("XML", dependencies = TRUE, repos="http://cran.rstudio.com/");'
 RUN Rscript -e 'BiocManager::install("rtracklayer", dependencies = TRUE);'
 
 # RAxML
