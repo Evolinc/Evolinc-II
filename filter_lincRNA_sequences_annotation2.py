@@ -6,7 +6,7 @@ infile = sys.argv[1] # input file for minimap2 SAM output
 outfile = sys.argv[2] # output file for filtered SAM output
 
 final = list()
-with open(infile, 'rU' ) as fh_in:
+with open(infile) as fh_in:
 	for line in fh_in:
 		line = line.strip().split()
 		ID = "%s\t%s" % (line[2], line[0])
