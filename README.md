@@ -4,8 +4,8 @@
 [![Docker Automated build](https://img.shields.io/docker/automated/evolinc/evolinc-ii.svg)](https://hub.docker.com/r/evolinc/evolinc-ii/)
 [![Release](https://shields.beevelop.com/github/release/Evolinc/Evolinc-II.svg?style=flat-square)](https://github.com/Evolinc/Evolinc-II/releases)
 
-# EVOLINC-II 1.2
-Evolinc-II pipeline is designed to perform a series of comparative genomic and transcriptomic analyses across an evolutionary timescale of the user’s choosing and on any number (1-1000s) of query lincRNAs. 
+# EVOLINC-II 2.0
+Evolinc-II pipeline is designed to perform a series of comparative genomic and transcriptomic analyses across an evolutionary timescale of the user’s choosing and on any number (1-1000s) of query lincRNAs. Please see our chapter in Plant Comparative Genomics for a detailed explanation on how to use Evolinc-II in your research (https://link.springer.com/protocol/10.1007/978-1-0716-2429-6_3). 
 
 Evolinc-II minimally requires the following input data:
 
@@ -16,7 +16,7 @@ Evolinc-II minimally requires the following input data:
 
  
 # Availability
-### Using Docker image
+### Using a Docker image
 
 Since there are several dependencies (can be seen in [Dockerfile](https://hub.docker.com/r/cyverse/evolinc-ii/~/dockerfile/)) for running Evolinc-II on your linux or MAC OS, we highly recommend using the Docker image for [Evolinc-II](https://hub.docker.com/r/cyverse/evolinc-ii/) or use the [Dockerfile](https://hub.docker.com/r/cyverse/evolinc-ii/~/dockerfile/) to build an image and then use the built image.
 
@@ -47,6 +47,8 @@ If you experience any issues with running Evolinc-I (DE app or source code or Do
 The sources in this github repository are copyright free. Thus you are allowed to use these sources in which ever way you like. Please be aware that other license terms apply for the `Notung.jar` used inside the image. Here is the full [MIT](https://choosealicense.com/licenses/mit/#) license. 
 
 # Citing Evolinc-II
-If you have used Evolinc in your research, please cite as below.
+If you have used Evolinc in your research, please cite the below manuscripts.
 
 *Andrew D. Nelson&ast;, Upendra K. Devisetty&ast;, Kyle Palos, Asher K. Haug-Baltzell, Eric Lyons, Mark A. Beilstein (2017). "Evolinc: a comparative transcriptomics and genomics pipeline for quickly identifying sequence conserved lincRNAs for functional analysis". Frontiers in Genetics. 1(10)*
+
+*Anna C. Nelson Dittrich and Andrew D. L. Nelson (2022). "High-Throughput Evolutionary Comparative Analysis of Long Intergenic Noncoding RNAs in Multiple Organisms". Plant Comparative Genomics (Part of the Methods in Molecular Biology Book Series)*
